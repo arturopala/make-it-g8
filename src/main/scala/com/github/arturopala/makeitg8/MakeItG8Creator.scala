@@ -16,6 +16,7 @@
 
 package com.github.arturopala.makeitg8
 
+import java.net.URLDecoder
 import java.nio.file.{Path, Paths}
 
 import better.files.{File, Resource}

@@ -16,6 +16,7 @@
 
 package com.github.arturopala.makeitg8
 
+import java.net.URLDecoder
 import java.nio.file.Path
 
 import better.files._
@@ -63,13 +64,15 @@ object MakeItG8 extends App with MakeItG8Creator {
       ignoredPaths,
       templateName,
       packageName,
-      keywordValueMap,
+      keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")),
       g8BuildTemplateSource,
       g8BuildTemplateResources,
       scriptTestTarget,
       scriptTestCommand,
       createBuildFiles = commandLine.createBuildFiles(),
-      commandLine.templateDescription.getOrElse(templateName)
+      commandLine.templateDescription
+        .map(URLDecoder.decode(_, "utf-8"))
+        .getOrElse(templateName)
     )
   }
 }
@@ -95,10 +98,11 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   )
 
   version("MakeItG8 - convert your project into gitter8 template")
-  banner("""Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [-Kkey="pattern"]"
-           |
-           |Options:
-           |""".stripMargin)
+  banner(
+    """Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-Kkey=patternUrlEncoded]"
+      |
+      |Options:
+      |""".stripMargin)
   footer("\nFor all other tricks, consult the README!")
 
   mainOptions = Seq(sourcePath, targetPath)
