@@ -41,6 +41,8 @@ object SbtMakeItG8Plugin extends AutoPlugin {
       settingKey[List[String]]("List of template file resources relative to the root")
     val makeItG8ScriptTestTarget = settingKey[String]("Where to create temp project for tests, e.g. target/sandbox")
     val makeItG8ScriptTestCommand = settingKey[String]("Command to test generated project, e.g. sbt test")
+    val makeItG8ScriptBeforeTest =
+      settingKey[List[String]]("Commands run to initialize project before the tests, e.g. git init")
     val makeItG8Task = taskKey[File]("Create a g8 template from source code")
   }
 
@@ -62,6 +64,7 @@ object SbtMakeItG8Plugin extends AutoPlugin {
       makeItG8TemplateName := name.value.toLowerCase.replaceAllLiterally("-", "") + ".g8",
       makeItG8PackageName := organization.value + "." + name.value.toLowerCase.replaceAllLiterally("-", ""),
       makeItG8KeywordValueMap := Map("description" -> description.value),
+      makeItG8ScriptBeforeTest := List.empty,
       makeItG8Task := {
         val config = MakeItG8Config(
           BetterFile(makeItG8SourceFolder.value.toPath),
@@ -74,6 +77,7 @@ object SbtMakeItG8Plugin extends AutoPlugin {
           Nil,
           makeItG8ScriptTestTarget.value,
           makeItG8ScriptTestCommand.value,
+          makeItG8ScriptBeforeTest.value,
           clearTargetFolder = false,
           makeItG8TemplateDescription.value
         )

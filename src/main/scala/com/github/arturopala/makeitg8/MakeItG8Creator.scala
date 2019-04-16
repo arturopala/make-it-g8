@@ -116,6 +116,7 @@ trait MakeItG8Creator {
         "$testTargetFolder$"    -> config.scriptTestTarget,
         "$testTemplateName$"    -> testTemplateName,
         "$testCommand$"         -> config.scriptTestCommand,
+        "$beforeTest$"          -> config.scriptBeforeTest.mkString("\n\t"),
         "$makeItG8CommandLine$" -> s"""sbt "run --noclear -s ../../${config.scriptTestTarget}/$testTemplateName -t ../.. --description ${URLEncoder
           .encode(config.templateDescription, "utf-8")} -p ${config.packageName} -K ${config.keywordValueMap
           .map {
@@ -147,6 +148,8 @@ trait MakeItG8Creator {
           buildFilesReplacements
             .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
     }
+
+    println("Done.")
   }
 
   //---------------------------------------

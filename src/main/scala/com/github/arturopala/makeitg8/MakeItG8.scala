@@ -69,7 +69,8 @@ object MakeItG8 extends App with MakeItG8Creator {
       g8BuildTemplateResources,
       scriptTestTarget,
       scriptTestCommand,
-      clearTargetFolder = commandLine.createBuildFiles(),
+      config.getStringList("build.test.before").asScala.toList,
+      commandLine.clearBuildFiles(),
       commandLine.templateDescription
         .map(URLDecoder.decode(_, "utf-8"))
         .getOrElse(templateName)
@@ -89,7 +90,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   val keywords =
     props[String](name = 'K', keyName = "variable", valueName = "text", descr = "Text chunks to parametrize")
   val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
-  val createBuildFiles = toggle(
+  val clearBuildFiles = toggle(
     name = "clear",
     short = 'c',
     descrYes = "Clear target folder",

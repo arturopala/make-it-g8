@@ -29,5 +29,6 @@ case class MakeItG8Config(
   g8BuildTemplateResources: List[String],
   scriptTestTarget: String,
   scriptTestCommand: String,
+  scriptBeforeTest: List[String],
   clearTargetFolder: Boolean,
   templateDescription: String)
