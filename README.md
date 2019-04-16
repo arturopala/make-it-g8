@@ -2,12 +2,12 @@ Tool to convert your project into gitter8 template
 ===
 
 ## Motivation
-Creating new gitter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
+Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
 You may also want to automate template creation after changes made to the project without manually replacing package names and text chunks with the variables. 
 Use this tool from the command line or plug it into your SBT build.
 
 ## What does it mean to create g8 template?
-The [gitter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
+The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
 Place it on GitHub and use with the `g8` command line tool or `sbt new` command to spring your own project.
 
 ## How to run the tool from command line

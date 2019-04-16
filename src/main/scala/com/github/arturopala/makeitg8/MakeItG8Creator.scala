@@ -40,42 +40,6 @@ trait MakeItG8Creator {
     }
 
     //---------------------------------------
-    // COPY PARAMETRISED BUILD FILES
-    //---------------------------------------
-
-    if (config.createBuildFiles) {
-
-      val buildReplacements = Seq(
-        "$templateName$"      -> config.templateName,
-        "$g8CommandLineArgs$" -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
-        "$testTarget$"        -> config.scriptTestTarget,
-        "$testCommand$"       -> config.scriptTestCommand
-      ) ++ config.keywordValueMap.map { case (k, v) => s"$$$k$$" -> v }.toSeq
-
-      println()
-      println("Build file replacements:")
-
-      println(
-        buildReplacements
-          .map(r => s"${r._1} -> ${r._2}")
-          .mkString("\n"))
-
-      println()
-
-      config.g8BuildTemplateResources.foreach { path =>
-        val targetFile = File(config.targetFolder.path.resolve(path))
-        val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
-        println(s"Adding build file $path")
-        targetFile.createFileIfNotExists(createParents = true)
-        val lines = content.lines
-        targetFile.printLines(
-          lines.map(line =>
-            buildReplacements
-              .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
-      }
-    }
-
-    //---------------------------------------
     // PREPARE CONTENT REPLACEMENT KEYWORDS
     //---------------------------------------
 
@@ -101,23 +65,24 @@ trait MakeItG8Creator {
     // COPY PARAMETRISED PROJECT FILES TO G8
     //---------------------------------------
 
-    config.sourceFolder.listRecursively
-      .foreach { source =>
+    val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
+      .map { source =>
         val sourcePath = config.sourceFolder.relativize(source)
-        if (!config.ignoredPaths.exists(sourcePath.startsWith)) {
+        if (!config.ignoredPaths.exists(path => sourcePath.startsWith(path) || sourcePath.getFileName.toString == path)) {
           val targetPath = templatePathFor(sourcePath, replacements)
           val target = File(targetG8Folder.path.resolve(targetPath))
           println(s"Processing $sourcePath to $targetPath")
-          if (source.isDirectory)
+          if (source.isDirectory) {
             config.targetFolder.createDirectoryIfNotExists()
-          else {
+            None
+          } else {
             target.createFileIfNotExists(createParents = true)
             target.write(replace(source.contentAsString, replacements))
-
-            //target.printLines(source.lineIterator.map(replace(_, replacements)))
+            Some(sourcePath)
           }
-        }
+        } else None
       }
+      .collect { case Some(path) => path }
 
     //---------------------------------------
     // COPY OR CREATE STATIC PROJECT FILES
@@ -126,6 +91,47 @@ trait MakeItG8Creator {
     val defaultPropertiesFile = targetG8Folder.createChild("default.properties")
     defaultPropertiesFile.write(
       prepareDefaultProperties(config.templateName, config.packageName, keywords, config.keywordValueMap))
+
+    //---------------------------------------
+    // COPY PARAMETRISED BUILD FILES
+    //---------------------------------------
+
+    if (config.createBuildFiles) {
+
+      val buildReplacements = Seq(
+        "$templateName$"        -> config.templateName,
+        "$templateDescription$" -> config.templateName,
+        "$gitRepositoryName$"   -> config.templateName,
+        "$placeholders$"        -> replacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
+        "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
+        "$templateName$"        -> config.templateName,
+        "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
+        "$testTarget$"          -> config.scriptTestTarget,
+        "$testCommand$"         -> config.scriptTestCommand
+      )
+
+      println()
+      println("Build file replacements:")
+
+      println(
+        buildReplacements
+          .map(r => s"${r._1} -> ${r._2}")
+          .mkString("\n"))
+
+      println()
+
+      config.g8BuildTemplateResources.foreach { path =>
+        val targetFile = File(config.targetFolder.path.resolve(path))
+        val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
+        println(s"Adding build file $path")
+        targetFile.createFileIfNotExists(createParents = true)
+        val lines = content.lines
+        targetFile.printLines(
+          lines.map(line =>
+            buildReplacements
+              .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
+      }
+    }
   }
 
   //---------------------------------------
