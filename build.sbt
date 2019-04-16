@@ -21,5 +21,6 @@ lazy val root = (project in file("."))
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     scriptedLaunchOpts ++= sys.process.javaVmArguments.filter(
       a => Seq("-Xmx", "-Xms", "-XX", "-Dsbt.log.noformat").exists(a.startsWith)
-    )
+    ),
+    excludeFilter in (Compile, unmanagedResources) := NothingFilter
   )
