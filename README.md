@@ -3,7 +3,7 @@ Tool to convert your project into giter8 template
 
 ## Motivation
 Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
-You may also want to automate template creation after changes made to the project without manually replacing package names and text chunks with the variables. 
+You may also want to automate template creation after changes made to the project without manually replacing package paths, file names and text chunks with the placeholders. 
 Use this tool from the command line or plug it into your SBT build.
 
 ## What does it mean to create g8 template?
