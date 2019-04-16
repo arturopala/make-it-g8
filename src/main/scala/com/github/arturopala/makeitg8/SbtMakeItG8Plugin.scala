@@ -33,6 +33,7 @@ object SbtMakeItG8Plugin extends AutoPlugin {
     val makeItG8TargetFolder = settingKey[File]("Template target path")
     val makeItG8IgnoredPaths = settingKey[List[String]]("Source path prefixes to ignore")
     val makeItG8TemplateName = settingKey[String]("Template name")
+    val makeItG8TemplateDescription = settingKey[String]("Template description")
     val makeItG8PackageName = settingKey[String]("Source code package name to parametrize")
     val makeItG8KeywordValueMap = settingKey[Map[String, String]]("Text chunks to parametrize by key word")
     val makeItG8BuildTemplateSource = settingKey[String]("Template project build resources root")
@@ -73,7 +74,8 @@ object SbtMakeItG8Plugin extends AutoPlugin {
           Nil,
           makeItG8ScriptTestTarget.value,
           makeItG8ScriptTestCommand.value,
-          createBuildFiles = false
+          createBuildFiles = false,
+          makeItG8TemplateDescription.value
         )
         MakeItG8Creator.createG8Template(config)
         makeItG8TargetFolder.value / "src" / "main" / "g8"

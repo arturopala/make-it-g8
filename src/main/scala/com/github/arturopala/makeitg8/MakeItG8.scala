@@ -49,7 +49,11 @@ object MakeItG8 extends App with MakeItG8Creator {
 
     val g8BuildTemplateSource = config.getString("build.source")
     val g8BuildTemplateResources = config.getStringList("build.resources").asScala.toList
-    val templateName = commandLine.templateName.getOrElse(sourceFolder.name)
+    val templateName =
+      commandLine.templateName.getOrElse(
+        commandLine.targetPath
+          .map(_.getFileName.toString)
+          .getOrElse(sourceFolder.name))
     val scriptTestTarget = config.getString("build.test.folder")
     val scriptTestCommand = config.getString("build.test.command")
 
@@ -64,7 +68,8 @@ object MakeItG8 extends App with MakeItG8Creator {
       g8BuildTemplateResources,
       scriptTestTarget,
       scriptTestCommand,
-      createBuildFiles = true
+      createBuildFiles = true,
+      commandLine.templateDescription.getOrElse(templateName)
     )
   }
 }
@@ -80,6 +85,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
     opt[String](name = "package", short = 'p', descr = "Source code base package name", required = true)
   val keywords =
     props[String](name = 'K', keyName = "variable", valueName = "text", descr = "Text chunks to parametrize")
+  val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
 
   version("MakeItG8 - convert your project into gitter8 template")
   banner("""Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [-Kkey="pattern"]"

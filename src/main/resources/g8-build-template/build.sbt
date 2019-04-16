@@ -2,7 +2,8 @@
 // To test the template run the script `./test.sh`
 // See http://www.foundweekends.org/giter8/testing.html#Using+the+Giter8Plugin for more details.
 lazy val root = (project in file(".")).settings(
-  name := "$templateName$.g8",
+  name := "$templateName$",
+  description := "$templateDescription$",
   test in Test := {
     val _ = (g8Test in Test).toTask("").value
   },

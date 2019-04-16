@@ -4,11 +4,11 @@ if [ -f ./build.sbt ] && [ -d ./src/main/g8 ]; then
 
     export TEMPLATE=`pwd | xargs basename`
     echo ${TEMPLATE}
-    mkdir -p $testTarget$
-    cd $testTarget$
-    sudo rm -r $templateName$
+    mkdir -p $testTargetFolder$
+    cd $testTargetFolder$
+    sudo rm -r $testTemplateName$
     g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ "$@"
-    cd $templateName$
+    cd $testTemplateName$
     git init
     git add .
     git commit -m start

@@ -24,7 +24,7 @@ trait MakeItG8Creator {
 
   def createG8Template(config: MakeItG8Config): Unit = {
 
-    println(s"Processing ${config.sourceFolder} into gitter8 template ${config.targetFolder} ...")
+    println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
     if (config.targetFolder.exists) {
       if (config.createBuildFiles) {
         println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
@@ -44,17 +44,17 @@ trait MakeItG8Creator {
     //---------------------------------------
 
     val keywords: Seq[String] = config.keywordValueMap.keys.toSeq
-    val replacements: Seq[(String, String)] = Seq(
-      config.packageName.replaceAllLiterally(".", "/") -> "$package$",
+    val contentFilesReplacements: Seq[(String, String)] = Seq(
+      config.packageName.replaceAllLiterally(".", "/") -> "$packaged$",
       config.packageName                               -> "$package$"
     ) ++ prepareKeywordsReplacements(keywords, config.keywordValueMap)
 
     println()
 
-    if (replacements.nonEmpty) {
+    if (contentFilesReplacements.nonEmpty) {
       println("Content file replacements:")
       println(
-        replacements
+        contentFilesReplacements
           .map(r => s"${r._1} -> ${r._2}")
           .mkString("\n"))
     }
@@ -69,7 +69,7 @@ trait MakeItG8Creator {
       .map { source =>
         val sourcePath = config.sourceFolder.relativize(source)
         if (!config.ignoredPaths.exists(path => sourcePath.startsWith(path) || sourcePath.getFileName.toString == path)) {
-          val targetPath = templatePathFor(sourcePath, replacements)
+          val targetPath = templatePathFor(sourcePath, contentFilesReplacements)
           val target = File(targetG8Folder.path.resolve(targetPath))
           println(s"Processing $sourcePath to $targetPath")
           if (source.isDirectory) {
@@ -77,7 +77,7 @@ trait MakeItG8Creator {
             None
           } else {
             target.createFileIfNotExists(createParents = true)
-            target.write(replace(source.contentAsString, replacements))
+            target.write(replace(source.contentAsString, contentFilesReplacements))
             Some(sourcePath)
           }
         } else None
@@ -98,15 +98,15 @@ trait MakeItG8Creator {
 
     if (config.createBuildFiles) {
 
-      val buildReplacements = Seq(
+      val buildFilesReplacements = Seq(
         "$templateName$"        -> config.templateName,
-        "$templateDescription$" -> config.templateName,
+        "$templateDescription$" -> config.templateDescription,
         "$gitRepositoryName$"   -> config.templateName,
-        "$placeholders$"        -> replacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
+        "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
         "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
-        "$templateName$"        -> config.templateName,
         "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
-        "$testTarget$"          -> config.scriptTestTarget,
+        "$testTargetFolder$"    -> config.scriptTestTarget,
+        "$testTemplateName$"    -> config.sourceFolder.path.getFileName.toString,
         "$testCommand$"         -> config.scriptTestCommand
       )
 
@@ -114,7 +114,7 @@ trait MakeItG8Creator {
       println("Build file replacements:")
 
       println(
-        buildReplacements
+        buildFilesReplacements
           .map(r => s"${r._1} -> ${r._2}")
           .mkString("\n"))
 
@@ -128,7 +128,7 @@ trait MakeItG8Creator {
         val lines = content.lines
         targetFile.printLines(
           lines.map(line =>
-            buildReplacements
+            buildFilesReplacements
               .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
       }
     }
@@ -162,6 +162,7 @@ trait MakeItG8Creator {
       parts.mkString(".")                                             -> s"$$${keyword}Package$$",
       parts.map(lowercase).mkString(".")                              -> s"$$${keyword}PackageLowercase$$",
       parts.mkString("/")                                             -> s"$$${keyword}Packaged$$",
+      parts.map(lowercase).mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
       parts.map(lowercase).mkString("-")                              -> s"$$${keyword}Hyphen$$",
       value                                                           -> s"$$$keyword$$"
     )
@@ -182,13 +183,15 @@ trait MakeItG8Creator {
           s"""${keyword}Package=$$$keyword;format="package"$$""",
           s"""${keyword}PackageLowercase=$$$keyword;format="lowercase,package"$$""",
           s"""${keyword}Packaged=$$$keyword;format="packaged"$$""",
+          s"""${keyword}PackagedLowercase=$$$keyword;format="packaged,lowercase"$$""",
           s"""${keyword}Hyphen=$$$keyword;format="normalize"$$"""
         )
       }
       .mkString("\n")
     s"""$keywordsMapping
        |package=$packageName
-       |name=$name
+       |packaged=$$package;format="packaged"$$
+       |name=$$${keywords.sorted.head}Hyphen$$
      """.stripMargin
   }
 
