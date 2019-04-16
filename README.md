@@ -12,16 +12,21 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ## How to run the tool from command line
 
-    sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [-Kkey="pattern"]"
+    Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]"
     
     Options:
     
-      -s, --source  <arg>                  Source project path
-      -t, --target  <arg>                  Target template path
-    
+      -s, --source  <arg>                  Source code path
+      -t, --target  <arg>                  Template target path
+      
       -Kvariable=text [variable=text]...   Text chunks to parametrize
-      -n, --name  <arg>                    Target template name
-      -p, --package  <arg>                 Source project base package name
+    
+      -c, --clear                          Clear target folder
+          --noclear                        Do not clear whole target folder, only
+                                           src/main/g8 subfolder
+      -d, --description  <arg>             Template description
+      -n, --name  <arg>                    Template name
+      -p, --package  <arg>                 Source code base package name
       -h, --help                           Show help message
       -v, --version                        Show version of this program
     

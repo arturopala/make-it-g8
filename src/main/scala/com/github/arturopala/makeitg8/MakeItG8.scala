@@ -21,7 +21,7 @@ import java.nio.file.Path
 
 import better.files._
 import com.typesafe.config.{Config, ConfigFactory}
-import org.rogach.scallop.exceptions.RequiredOptionNotFound
+import org.rogach.scallop.exceptions.{RequiredOptionNotFound, UnknownOption}
 
 import scala.util.control.NonFatal
 
@@ -113,7 +113,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   validatePathExists(sourcePath)
 
   override def onError(e: Throwable): Unit = e match {
-    case _: RequiredOptionNotFound => printHelp()
-    case NonFatal(e)               => super.onError(e)
+    case _: RequiredOptionNotFound | _: UnknownOption => printHelp()
+    case NonFatal(e)                                  => super.onError(e)
   }
 }
