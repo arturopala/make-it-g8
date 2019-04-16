@@ -16,7 +16,7 @@
 
 package com.github.arturopala.makeitg8
 
-import java.net.URLDecoder
+import java.net.{URLDecoder, URLEncoder}
 import java.nio.file.{Path, Paths}
 
 import better.files.{File, Resource}
@@ -26,7 +26,7 @@ trait MakeItG8Creator {
   def createG8Template(config: MakeItG8Config): Unit = {
 
     println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
-    if (config.targetFolder.exists && config.createBuildFiles) {
+    if (config.targetFolder.exists && config.clearTargetFolder) {
       println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
       config.targetFolder.clear()
     } else {
@@ -35,7 +35,7 @@ trait MakeItG8Creator {
     }
 
     val targetG8Folder = (config.targetFolder / "src" / "main" / "g8").createDirectoryIfNotExists()
-    if (!config.createBuildFiles) {
+    if (!config.clearTargetFolder) {
       println(s"Clearing ${targetG8Folder.path} to make space for a new template")
       targetG8Folder.clear()
     }
@@ -101,20 +101,29 @@ trait MakeItG8Creator {
     // COPY PARAMETRISED BUILD FILES
     //---------------------------------------
 
-    val buildFilesReplacements = Seq(
-      "$templateName$"        -> config.templateName,
-      "$templateDescription$" -> config.templateDescription,
-      "$gitRepositoryName$"   -> config.templateName,
-      "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
-      "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
-      "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
-      "$testTargetFolder$"    -> config.scriptTestTarget,
-      "$testTemplateName$" -> contentFilesReplacements
+    val buildFilesReplacements = {
+      val testTemplateName = contentFilesReplacements
         .find(_._2 == s"$$${keywords.min}Hyphen$$")
         .map(_._1)
-        .getOrElse(config.sourceFolder.path.getFileName.toString),
-      "$testCommand$" -> config.scriptTestCommand
-    )
+        .getOrElse(config.sourceFolder.path.getFileName.toString)
+      Seq(
+        "$templateName$"        -> config.templateName,
+        "$templateDescription$" -> config.templateDescription,
+        "$gitRepositoryName$"   -> config.templateName,
+        "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
+        "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
+        "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
+        "$testTargetFolder$"    -> config.scriptTestTarget,
+        "$testTemplateName$"    -> testTemplateName,
+        "$testCommand$"         -> config.scriptTestCommand,
+        "$makeItG8CommandLine$" -> s"""sbt "run --noclear -s ../../${config.scriptTestTarget}/$testTemplateName -t ../.. --description ${URLEncoder
+          .encode(config.templateDescription, "utf-8")} -p ${config.packageName} -K ${config.keywordValueMap
+          .map {
+            case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
+          }
+          .mkString(" ")}" """
+      )
+    }
 
     println()
     println("Build file replacements:")

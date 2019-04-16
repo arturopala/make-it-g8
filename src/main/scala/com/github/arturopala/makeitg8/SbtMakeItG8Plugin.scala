@@ -74,7 +74,7 @@ object SbtMakeItG8Plugin extends AutoPlugin {
           Nil,
           makeItG8ScriptTestTarget.value,
           makeItG8ScriptTestCommand.value,
-          createBuildFiles = false,
+          clearTargetFolder = false,
           makeItG8TemplateDescription.value
         )
         MakeItG8Creator.createG8Template(config)

@@ -69,7 +69,7 @@ object MakeItG8 extends App with MakeItG8Creator {
       g8BuildTemplateResources,
       scriptTestTarget,
       scriptTestCommand,
-      createBuildFiles = commandLine.createBuildFiles(),
+      clearTargetFolder = commandLine.createBuildFiles(),
       commandLine.templateDescription
         .map(URLDecoder.decode(_, "utf-8"))
         .getOrElse(templateName)

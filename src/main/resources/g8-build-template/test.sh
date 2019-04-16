@@ -16,7 +16,7 @@ if [ -f ./build.sbt ] && [ -d ./src/main/g8 ]; then
 
 else
 
-    echo "WARNING: run test in the template root folder"
+    echo "WARNING: run the script ./test.sh in the template root folder"
     exit -1
 
 fi
