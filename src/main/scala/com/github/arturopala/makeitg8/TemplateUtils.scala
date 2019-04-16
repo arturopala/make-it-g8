@@ -73,7 +73,7 @@ object TemplateUtils {
     s"""$keywordsMapping
        |package=$packageName
        |packaged=$$package;format="packaged"$$
-       |name=${if (keywords.nonEmpty) s"""$$${keywords.min}Hyphen$$""" else name}
+       |name=${if (keywords.nonEmpty) s"""$$${keywords.minBy(_.length)}Hyphen$$""" else name}
      """.stripMargin
   }
 

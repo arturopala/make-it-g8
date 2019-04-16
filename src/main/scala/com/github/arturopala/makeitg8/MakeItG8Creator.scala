@@ -103,7 +103,7 @@ trait MakeItG8Creator {
 
     val buildFilesReplacements = {
       val testTemplateName = contentFilesReplacements
-        .find(_._2 == s"$$${keywords.min}Hyphen$$")
+        .find(_._2 == s"$$${keywords.minBy(_.length)}Hyphen$$")
         .map(_._1)
         .getOrElse(config.sourceFolder.path.getFileName.toString)
       Seq(
