@@ -2,6 +2,8 @@ package com.github.arturopala.makeitg8
 
 import java.nio.file.{Path, Paths}
 
+import scala.util.Try
+
 object TemplateUtils {
 
   //---------------------------------------
@@ -25,17 +27,27 @@ object TemplateUtils {
   def prepareKeywordReplacement(keyword: String, keywordValueMap: Map[String, String]): Seq[(String, String)] = {
     val value = keywordValueMap(keyword)
     val parts = parseKeyword(value)
-    Seq(
-      parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
-      decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
-      parts.map(uppercase).mkString("_")                              -> s"$$${keyword}Snake$$",
-      parts.mkString(".")                                             -> s"$$${keyword}Package$$",
-      parts.map(lowercase).mkString(".")                              -> s"$$${keyword}PackageLowercase$$",
-      parts.mkString("/")                                             -> s"$$${keyword}Packaged$$",
-      parts.map(lowercase).mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
-      parts.map(lowercase).mkString("-")                              -> s"$$${keyword}Hyphen$$",
-      value                                                           -> s"$$$keyword$$"
-    )
+    if (parts.size == 1) {
+      if (Try(parts.head.toInt).isSuccess)
+        Seq(value -> s"$$$keyword$$")
+      else
+        Seq(
+          parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
+          decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
+          value                                                           -> s"$$$keyword$$"
+        )
+    } else
+      Seq(
+        parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
+        decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
+        parts.map(uppercase).mkString("_")                              -> s"$$${keyword}Snake$$",
+        parts.mkString(".")                                             -> s"$$${keyword}Package$$",
+        parts.map(lowercase).mkString(".")                              -> s"$$${keyword}PackageLowercase$$",
+        parts.mkString("/")                                             -> s"$$${keyword}Packaged$$",
+        parts.map(lowercase).mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
+        parts.map(lowercase).mkString("-")                              -> s"$$${keyword}Hyphen$$",
+        value                                                           -> s"$$$keyword$$"
+      )
   }
 
   def prepareDefaultProperties(
