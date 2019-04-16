@@ -25,13 +25,13 @@ trait MakeItG8Creator {
   def createG8Template(config: MakeItG8Config): Unit = {
 
     println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
-    if (config.targetFolder.exists) {
-      if (config.createBuildFiles) {
-        println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
-        config.targetFolder.clear()
-      }
-    } else
+    if (config.targetFolder.exists && config.createBuildFiles) {
+      println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
+      config.targetFolder.clear()
+    } else {
       config.targetFolder.createDirectoryIfNotExists()
+
+    }
 
     val targetG8Folder = (config.targetFolder / "src" / "main" / "g8").createDirectoryIfNotExists()
     if (!config.createBuildFiles) {
@@ -100,44 +100,42 @@ trait MakeItG8Creator {
     // COPY PARAMETRISED BUILD FILES
     //---------------------------------------
 
-    if (config.createBuildFiles) {
+    val buildFilesReplacements = Seq(
+      "$templateName$"        -> config.templateName,
+      "$templateDescription$" -> config.templateDescription,
+      "$gitRepositoryName$"   -> config.templateName,
+      "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
+      "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
+      "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
+      "$testTargetFolder$"    -> config.scriptTestTarget,
+      "$testTemplateName$" -> contentFilesReplacements
+        .find(_._2 == s"$$${keywords.min}Hyphen$$")
+        .map(_._1)
+        .getOrElse(config.sourceFolder.path.getFileName.toString),
+      "$testCommand$" -> config.scriptTestCommand
+    )
 
-      val buildFilesReplacements = Seq(
-        "$templateName$"        -> config.templateName,
-        "$templateDescription$" -> config.templateDescription,
-        "$gitRepositoryName$"   -> config.templateName,
-        "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
-        "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
-        "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
-        "$testTargetFolder$"    -> config.scriptTestTarget,
-        "$testTemplateName$" -> contentFilesReplacements
-          .find(_._2 == s"$$${keywords.min}Hyphen$$")
-          .map(_._1)
-          .getOrElse(config.sourceFolder.path.getFileName.toString),
-        "$testCommand$" -> config.scriptTestCommand
-      )
+    println()
+    println("Build file replacements:")
 
-      println()
-      println("Build file replacements:")
+    println(
+      buildFilesReplacements
+        .map(r => s"${r._1} -> ${r._2}")
+        .mkString("\n"))
 
-      println(
-        buildFilesReplacements
-          .map(r => s"${r._1} -> ${r._2}")
-          .mkString("\n"))
+    println()
 
-      println()
-
-      config.g8BuildTemplateResources.foreach { path =>
-        val targetFile = File(config.targetFolder.path.resolve(path))
-        val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
-        println(s"Adding build file $path")
-        targetFile.createFileIfNotExists(createParents = true)
-        val lines = content.lines
-        targetFile.printLines(
-          lines.map(line =>
-            buildFilesReplacements
-              .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
-      }
+    config.g8BuildTemplateResources.foreach { path =>
+      val targetFile = File(config.targetFolder.path.resolve(path))
+      val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
+      println(s"Adding build file $path")
+      targetFile.createFileIfNotExists(createParents = true)
+      val lines = content.lines
+      targetFile
+        .clear()
+        .printLines(lines.map(line =>
+          buildFilesReplacements
+            .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
     }
   }
 
