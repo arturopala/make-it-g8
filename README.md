@@ -1,4 +1,4 @@
-Tool to convert your project into gitter8 template
+Tool to convert your project into giter8 template
 ===
 
 ## Motivation
