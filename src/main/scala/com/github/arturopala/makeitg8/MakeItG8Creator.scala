@@ -90,7 +90,11 @@ trait MakeItG8Creator {
 
     val defaultPropertiesFile = targetG8Folder.createChild("default.properties")
     defaultPropertiesFile.write(
-      prepareDefaultProperties(config.templateName, config.packageName, keywords, config.keywordValueMap))
+      prepareDefaultProperties(
+        config.sourceFolder.path.getFileName.toString,
+        config.packageName,
+        keywords,
+        config.keywordValueMap))
 
     //---------------------------------------
     // COPY PARAMETRISED BUILD FILES
@@ -106,8 +110,11 @@ trait MakeItG8Creator {
         "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
         "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
         "$testTargetFolder$"    -> config.scriptTestTarget,
-        "$testTemplateName$"    -> config.sourceFolder.path.getFileName.toString,
-        "$testCommand$"         -> config.scriptTestCommand
+        "$testTemplateName$" -> contentFilesReplacements
+          .find(_._2 == s"$$${keywords.min}Hyphen$$")
+          .map(_._1)
+          .getOrElse(config.sourceFolder.path.getFileName.toString),
+        "$testCommand$" -> config.scriptTestCommand
       )
 
       println()
@@ -191,7 +198,7 @@ trait MakeItG8Creator {
     s"""$keywordsMapping
        |package=$packageName
        |packaged=$$package;format="packaged"$$
-       |name=$$${keywords.sorted.head}Hyphen$$
+       |name=${if (keywords.nonEmpty) s"""$$${keywords.min}Hyphen$$""" else name}
      """.stripMargin
   }
 
