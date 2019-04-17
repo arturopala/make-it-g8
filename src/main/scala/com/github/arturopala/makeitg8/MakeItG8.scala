@@ -132,7 +132,16 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   validatePathExists(sourcePath)
 
   override def onError(e: Throwable): Unit = e match {
-    case _: RequiredOptionNotFound | _: UnknownOption => printHelp()
-    case NonFatal(ex)                                 => super.onError(ex)
+    case e: RequiredOptionNotFound => {
+      println(s"WARNING: Missing required option [${e.name}]")
+      println()
+      printHelp()
+    }
+    case e: UnknownOption => {
+      println(s"WARNING: Unsupported option [${e.optionName}]")
+      println()
+      printHelp()
+    }
+    case NonFatal(ex) => super.onError(ex)
   }
 }
