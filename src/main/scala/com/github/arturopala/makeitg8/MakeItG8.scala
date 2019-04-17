@@ -28,19 +28,24 @@ import scala.util.control.NonFatal
 
 object MakeItG8 extends App with MakeItG8Creator {
 
-  Try {
-    readConfig().fold(_ => {
+  readConfig().fold(
+    _ => {
       println()
       println("Sorry, your command is missing something, consult the doc and try again!")
       System.exit(-1)
-    }, config => createG8Template(config))
-  }.fold(
-    _ => {
-      println()
-      println("Sorry, something went wrong, check the log and try again!")
-      System.exit(-1)
     },
-    _ => println("Done.")
+    config =>
+      createG8Template(config).fold(
+        _ => {
+          println()
+          println("Sorry, something went wrong, check the log and try again!")
+          System.exit(-1)
+        },
+        _ => {
+          println("Done.")
+          System.exit(0)
+        }
+    )
   )
 
   def readConfig(): Either[Throwable, MakeItG8Config] =

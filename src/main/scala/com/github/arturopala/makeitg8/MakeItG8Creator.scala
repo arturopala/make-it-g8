@@ -21,135 +21,141 @@ import java.nio.file.Path
 
 import better.files.{File, Resource}
 
+import scala.util.Try
+
 trait MakeItG8Creator {
 
-  def createG8Template(config: MakeItG8Config): Unit = {
+  def createG8Template(config: MakeItG8Config): Either[Throwable, Unit] =
+    Try {
 
-    println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
-    if (config.targetFolder.exists && config.clearTargetFolder) {
-      println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
-      config.targetFolder.clear()
-    } else {
-      config.targetFolder.createDirectoryIfNotExists()
+      println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
+      if (config.targetFolder.exists && config.clearTargetFolder) {
+        println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
+        config.targetFolder.clear()
+      } else {
+        config.targetFolder.createDirectoryIfNotExists()
 
-    }
+      }
 
-    val targetG8Folder = (config.targetFolder / "src" / "main" / "g8").createDirectoryIfNotExists()
-    if (!config.clearTargetFolder) {
-      println(s"Clearing ${targetG8Folder.path} to make space for a new template")
-      targetG8Folder.clear()
-    }
+      val targetG8Folder = (config.targetFolder / "src" / "main" / "g8").createDirectoryIfNotExists()
+      if (!config.clearTargetFolder) {
+        println(s"Clearing ${targetG8Folder.path} to make space for a new template")
+        targetG8Folder.clear()
+      }
 
-    //---------------------------------------
-    // PREPARE CONTENT REPLACEMENT KEYWORDS
-    //---------------------------------------
+      //---------------------------------------
+      // PREPARE CONTENT REPLACEMENT KEYWORDS
+      //---------------------------------------
 
-    val keywords: Seq[String] = config.keywordValueMap.keys.toSeq
-    val contentFilesReplacements: Seq[(String, String)] = Seq(
-      config.packageName.replaceAllLiterally(".", "/") -> "$packaged$",
-      config.packageName                               -> "$package$"
-    ) ++ TemplateUtils.prepareKeywordsReplacements(keywords, config.keywordValueMap)
+      val keywords: Seq[String] = config.keywordValueMap.keys.toSeq
+      val contentFilesReplacements: Seq[(String, String)] = Seq(
+        config.packageName.replaceAllLiterally(".", "/") -> "$packaged$",
+        config.packageName                               -> "$package$"
+      ) ++ TemplateUtils.prepareKeywordsReplacements(keywords, config.keywordValueMap)
 
-    println()
+      println()
 
-    if (contentFilesReplacements.nonEmpty) {
-      println("Content file replacements:")
+      if (contentFilesReplacements.nonEmpty) {
+        println("Content file replacements:")
+        println(
+          contentFilesReplacements
+            .map(r => s"${r._1} -> ${r._2}")
+            .mkString("\n"))
+      }
+
+      println()
+
+      //---------------------------------------
+      // COPY PARAMETRISED PROJECT FILES TO G8
+      //---------------------------------------
+
+      val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
+        .map { source =>
+          val sourcePath = config.sourceFolder.relativize(source)
+          if (!config.ignoredPaths.exists(
+                path => sourcePath.startsWith(path) || sourcePath.getFileName.toString == path)) {
+            val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
+            val target = File(targetG8Folder.path.resolve(targetPath))
+            println(s"Processing $sourcePath to $targetPath")
+            if (source.isDirectory) {
+              config.targetFolder.createDirectoryIfNotExists()
+              None
+            } else {
+              target.createFileIfNotExists(createParents = true)
+              target.write(TemplateUtils.replace(source.contentAsString, contentFilesReplacements))
+              Some(sourcePath)
+            }
+          } else None
+        }
+        .collect { case Some(path) => path }
+
+      //---------------------------------------
+      // COPY OR CREATE STATIC PROJECT FILES
+      //---------------------------------------
+
+      val defaultPropertiesFile = targetG8Folder.createChild("default.properties")
+      defaultPropertiesFile.write(
+        TemplateUtils.prepareDefaultProperties(
+          config.sourceFolder.path.getFileName.toString,
+          config.packageName,
+          keywords,
+          config.keywordValueMap))
+
+      //---------------------------------------
+      // COPY PARAMETRISED BUILD FILES
+      //---------------------------------------
+
+      val buildFilesReplacements = {
+        val testTemplateName = contentFilesReplacements
+          .find(_._2 == s"$$${keywords.minBy(_.length)}Hyphen$$")
+          .map(_._1)
+          .getOrElse(config.sourceFolder.path.getFileName.toString)
+        Seq(
+          "$templateName$"        -> config.templateName,
+          "$templateDescription$" -> config.templateDescription,
+          "$gitRepositoryName$"   -> config.templateName,
+          "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
+          "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
+          "$g8CommandLineArgs$" -> s"""${config.keywordValueMap
+            .map { case (k, v) => s"""--$k="$v"""" }
+            .mkString(" ")}""",
+          "$testTargetFolder$" -> config.scriptTestTarget,
+          "$testTemplateName$" -> testTemplateName,
+          "$testCommand$"      -> config.scriptTestCommand,
+          "$beforeTest$"       -> config.scriptBeforeTest.mkString("\n\t"),
+          "$makeItG8CommandLine$" ->
+            s"""sbt "run --noclear -s ../../${config.scriptTestTarget}/$testTemplateName -t ../.. --description ${URLEncoder
+              .encode(config.templateDescription, "utf-8")} -p ${config.packageName} -K ${config.keywordValueMap
+              .map {
+                case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
+              }
+              .mkString(" ")}" """
+        )
+      }
+
+      println()
+      println("Build file replacements:")
+
       println(
-        contentFilesReplacements
+        buildFilesReplacements
           .map(r => s"${r._1} -> ${r._2}")
           .mkString("\n"))
-    }
 
-    println()
+      println()
 
-    //---------------------------------------
-    // COPY PARAMETRISED PROJECT FILES TO G8
-    //---------------------------------------
-
-    val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
-      .map { source =>
-        val sourcePath = config.sourceFolder.relativize(source)
-        if (!config.ignoredPaths.exists(path => sourcePath.startsWith(path) || sourcePath.getFileName.toString == path)) {
-          val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
-          val target = File(targetG8Folder.path.resolve(targetPath))
-          println(s"Processing $sourcePath to $targetPath")
-          if (source.isDirectory) {
-            config.targetFolder.createDirectoryIfNotExists()
-            None
-          } else {
-            target.createFileIfNotExists(createParents = true)
-            target.write(TemplateUtils.replace(source.contentAsString, contentFilesReplacements))
-            Some(sourcePath)
-          }
-        } else None
+      config.g8BuildTemplateResources.foreach { path =>
+        val targetFile = File(config.targetFolder.path.resolve(path))
+        val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
+        println(s"Adding build file $path")
+        targetFile.createFileIfNotExists(createParents = true)
+        val lines = content.lines
+        targetFile
+          .clear()
+          .printLines(lines.map(line =>
+            buildFilesReplacements
+              .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
       }
-      .collect { case Some(path) => path }
-
-    //---------------------------------------
-    // COPY OR CREATE STATIC PROJECT FILES
-    //---------------------------------------
-
-    val defaultPropertiesFile = targetG8Folder.createChild("default.properties")
-    defaultPropertiesFile.write(
-      TemplateUtils.prepareDefaultProperties(
-        config.sourceFolder.path.getFileName.toString,
-        config.packageName,
-        keywords,
-        config.keywordValueMap))
-
-    //---------------------------------------
-    // COPY PARAMETRISED BUILD FILES
-    //---------------------------------------
-
-    val buildFilesReplacements = {
-      val testTemplateName = contentFilesReplacements
-        .find(_._2 == s"$$${keywords.minBy(_.length)}Hyphen$$")
-        .map(_._1)
-        .getOrElse(config.sourceFolder.path.getFileName.toString)
-      Seq(
-        "$templateName$"        -> config.templateName,
-        "$templateDescription$" -> config.templateDescription,
-        "$gitRepositoryName$"   -> config.templateName,
-        "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
-        "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
-        "$g8CommandLineArgs$"   -> s"""${config.keywordValueMap.map { case (k, v) => s"""--$k="$v"""" }.mkString(" ")}""",
-        "$testTargetFolder$"    -> config.scriptTestTarget,
-        "$testTemplateName$"    -> testTemplateName,
-        "$testCommand$"         -> config.scriptTestCommand,
-        "$beforeTest$"          -> config.scriptBeforeTest.mkString("\n\t"),
-        "$makeItG8CommandLine$" ->
-          s"""sbt "run --noclear -s ../../${config.scriptTestTarget}/$testTemplateName -t ../.. --description ${URLEncoder
-            .encode(config.templateDescription, "utf-8")} -p ${config.packageName} -K ${config.keywordValueMap
-            .map {
-              case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
-            }
-            .mkString(" ")}" """
-      )
-    }
-
-    println()
-    println("Build file replacements:")
-
-    println(
-      buildFilesReplacements
-        .map(r => s"${r._1} -> ${r._2}")
-        .mkString("\n"))
-
-    println()
-
-    config.g8BuildTemplateResources.foreach { path =>
-      val targetFile = File(config.targetFolder.path.resolve(path))
-      val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
-      println(s"Adding build file $path")
-      targetFile.createFileIfNotExists(createParents = true)
-      val lines = content.lines
-      targetFile
-        .clear()
-        .printLines(lines.map(line =>
-          buildFilesReplacements
-            .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
-    }
-  }
+    }.toEither
 }
 
 object MakeItG8Creator extends MakeItG8Creator
