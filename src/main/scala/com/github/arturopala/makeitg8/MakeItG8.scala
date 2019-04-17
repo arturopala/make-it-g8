@@ -88,6 +88,7 @@ object MakeItG8 extends App with MakeItG8Creator {
         scriptTestCommand,
         config.getStringList("build.test.before").asScala.toList,
         commandLine.clearBuildFiles(),
+        commandLine.createReadme(),
         commandLine.templateDescription
           .map(URLDecoder.decode(_, "utf-8"))
           .getOrElse(templateName)

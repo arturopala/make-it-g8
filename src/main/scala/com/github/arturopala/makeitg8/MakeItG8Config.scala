@@ -31,4 +31,5 @@ case class MakeItG8Config(
   scriptTestCommand: String,
   scriptBeforeTest: List[String],
   clearTargetFolder: Boolean,
+  createReadme: Boolean,
   templateDescription: String)

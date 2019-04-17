@@ -15,7 +15,7 @@ else
 
 fi
 
-sbt "run --noclear $*"
+sbt "run $*"
 
 
 

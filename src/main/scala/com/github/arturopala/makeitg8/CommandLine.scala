@@ -33,11 +33,19 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   val keywords =
     props[String](name = 'K', keyName = "variable", valueName = "text", descr = "Text chunks to parametrize")
   val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
+
   val clearBuildFiles = toggle(
     name = "clear",
     short = 'c',
     descrYes = "Clear target folder",
     descrNo = "Do not clear whole target folder, only src/main/g8 subfolder",
+    default = Some(true)
+  )
+  val createReadme = toggle(
+    name = "readme",
+    short = 'r',
+    descrYes = "Create readme",
+    descrNo = "Do not create/update readme",
     default = Some(true)
   )
 
