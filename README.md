@@ -19,9 +19,11 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 * adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
 * generates README with the template usage guide and an example project files tree picture
 
-## How to run the tool from command line
+## Run locally
 
-    Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]"
+    wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
+    chmod u+x make-it-g8.sh
+    ./make-it-g8.sh --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
     
     Options:
     
