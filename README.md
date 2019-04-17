@@ -12,7 +12,9 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ## Advantages of using make-it-g8
 
-* creates parametrized template wrapped in an SBT project
+* creates template wrapped nicely in an SBT project
+* supports parametrization by multiple replacement keys
+* derives automatically common key variants: camel, snake, hyphen, package, packaged, etc.
 * adds a script to generate an example project and test it
 * adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
 

@@ -22,10 +22,9 @@ object TemplateUtils {
       }
 
   def prepareKeywordsReplacements(keywords: Seq[String], keywordValueMap: Map[String, String]): Seq[(String, String)] =
-    keywords.flatMap(prepareKeywordReplacement(_, keywordValueMap))
+    keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap(k)))
 
-  def prepareKeywordReplacement(keyword: String, keywordValueMap: Map[String, String]): Seq[(String, String)] = {
-    val value = keywordValueMap(keyword)
+  def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
     val parts = parseKeyword(value)
     if (parts.size == 1) {
       if (Try(parts.head.toInt).isSuccess)
@@ -81,7 +80,7 @@ object TemplateUtils {
     keyword
       .foldLeft((List.empty[String], false)) {
         case ((list, split), ch) =>
-          if (ch == ' ') (list, true)
+          if (ch == ' ' || ch == '-') (list, true)
           else
             (list match {
               case Nil => s"$ch" :: Nil
