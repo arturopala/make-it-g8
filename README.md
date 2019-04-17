@@ -10,6 +10,12 @@ Use this tool from the command line or plug it into your SBT build.
 The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
 Place it on GitHub and use with the `g8` command line tool or `sbt new` command to spring your own project.
 
+## Advantages of using make-it-g8
+
+* creates parametrized template wrapped in an SBT project
+* adds a script to generate an example project and test it
+* adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
+
 ## How to run the tool from command line
 
     Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]"
@@ -23,7 +29,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
     
       -c, --clear                          Clear target folder
           --noclear                        Do not clear whole target folder, only
-                                           src/main/g8 subfolder
+                                           src/main/g8 subfolder`
       -d, --description  <arg>             Template description
       -n, --name  <arg>                    Template name
       -p, --package  <arg>                 Source code base package name
