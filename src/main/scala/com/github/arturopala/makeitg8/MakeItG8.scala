@@ -23,11 +23,15 @@ import better.files._
 import com.typesafe.config.{Config, ConfigFactory}
 import org.rogach.scallop.exceptions.{RequiredOptionNotFound, UnknownOption}
 
+import scala.util.Try
 import scala.util.control.NonFatal
 
 object MakeItG8 extends App with MakeItG8Creator {
 
-  createG8Template(readConfig())
+  Try(createG8Template(readConfig())).fold(
+    _ => println("Sorry, something went wrong"),
+    _ => println("Done.")
+  )
 
   def readConfig(): MakeItG8Config = {
 
@@ -114,6 +118,6 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   override def onError(e: Throwable): Unit = e match {
     case _: RequiredOptionNotFound | _: UnknownOption => printHelp()
-    case NonFatal(e)                                  => super.onError(e)
+    case NonFatal(ex)                                 => super.onError(ex)
   }
 }

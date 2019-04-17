@@ -149,8 +149,6 @@ trait MakeItG8Creator {
           buildFilesReplacements
             .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
     }
-
-    println("Done.")
   }
 }
 
