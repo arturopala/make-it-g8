@@ -17,6 +17,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 * derives automatically common key variants: camel, snake, hyphen, package, packaged, etc.
 * adds a script to generate an example project and test it
 * adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
+* generates README with the template usage guide and an example project files tree picture
 
 ## How to run the tool from command line
 
@@ -37,5 +38,10 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
       -p, --package  <arg>                 Source code base package name
       -h, --help                           Show help message
       -v, --version                        Show version of this program
+      
+## Example templates created with make-it-g8
+
+* https://github.com/hmrc/template-play-26-frontend.g8
+* https://github.com/hmrc/template-play-26-frontend-fsm.g8
     
 
