@@ -45,18 +45,38 @@ class TemplateUtilsSpec extends WordSpec with Matchers {
         ("Foo/Bar", "$keyPackaged$"),
         ("foo/bar", "$keyPackagedLowercase$"),
         ("foo-bar", "$keyHyphen$"),
+        ("foo bar", "$keyLowercase$"),
+        ("FOO BAR", "$keyUppercase$"),
         ("Foo Bar", "$key$")
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "Foo") shouldBe List(
         ("Foo", "$keyCamel$"),
         ("foo", "$keycamel$"),
+        ("foo", "$keyLowercase$"),
+        ("FOO", "$keyUppercase$"),
         ("Foo", "$key$")
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "9786") shouldBe List(
         ("9786", "$key$")
       )
+    }
+
+    "create multiple replacements sequences" in {
+      TemplateUtils.prepareKeywordsReplacements(Seq("bcde", "ABC"), Map("ABC" -> "abc")) shouldBe
+        List(
+          ("Bcde", "$bcdeCamel$"),
+          ("bcde", "$bcdecamel$"),
+          ("bcde", "$bcdeLowercase$"),
+          ("BCDE", "$bcdeUppercase$"),
+          ("bcde", "$bcde$"),
+          ("Abc", "$ABCCamel$"),
+          ("abc", "$ABCcamel$"),
+          ("abc", "$ABCLowercase$"),
+          ("ABC", "$ABCUppercase$"),
+          ("abc", "$ABC$")
+        )
     }
 
     "amend the text using provided replacements" in {

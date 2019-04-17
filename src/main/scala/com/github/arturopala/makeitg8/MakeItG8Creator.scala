@@ -47,7 +47,7 @@ trait MakeItG8Creator {
       // PREPARE CONTENT REPLACEMENT KEYWORDS
       //---------------------------------------
 
-      val keywords: Seq[String] = config.keywordValueMap.keys.toSeq
+      val keywords: Seq[String] = config.keywordValueMap.toSeq.sortBy(p => -p._2.length).map(_._1)
       val contentFilesReplacements: Seq[(String, String)] = Seq(
         config.packageName.replaceAllLiterally(".", "/") -> "$packaged$",
         config.packageName                               -> "$package$"

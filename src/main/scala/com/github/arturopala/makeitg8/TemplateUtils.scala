@@ -38,7 +38,7 @@ object TemplateUtils {
       }
 
   def prepareKeywordsReplacements(keywords: Seq[String], keywordValueMap: Map[String, String]): Seq[(String, String)] =
-    keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap(k)))
+    keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap.getOrElse(k, k)))
 
   def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
     val parts = parseKeyword(value)
@@ -49,6 +49,8 @@ object TemplateUtils {
         Seq(
           parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
           decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
+          parts.map(lowercase).mkString(" ")                              -> s"$$${keyword}Lowercase$$",
+          parts.map(uppercase).mkString(" ")                              -> s"$$${keyword}Uppercase$$",
           value                                                           -> s"$$$keyword$$"
         )
     } else
@@ -61,6 +63,8 @@ object TemplateUtils {
         parts.mkString("/")                                             -> s"$$${keyword}Packaged$$",
         parts.map(lowercase).mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
         parts.map(lowercase).mkString("-")                              -> s"$$${keyword}Hyphen$$",
+        parts.map(lowercase).mkString(" ")                              -> s"$$${keyword}Lowercase$$",
+        parts.map(uppercase).mkString(" ")                              -> s"$$${keyword}Uppercase$$",
         value                                                           -> s"$$$keyword$$"
       )
   }
@@ -81,7 +85,9 @@ object TemplateUtils {
           s"""${keyword}PackageLowercase=$$$keyword;format="lowercase,package"$$""",
           s"""${keyword}Packaged=$$$keyword;format="packaged"$$""",
           s"""${keyword}PackagedLowercase=$$$keyword;format="packaged,lowercase"$$""",
-          s"""${keyword}Hyphen=$$$keyword;format="normalize"$$"""
+          s"""${keyword}Hyphen=$$$keyword;format="normalize"$$""",
+          s"""${keyword}Uppercase=$$$keyword;format="uppercase"$$""",
+          s"""${keyword}Lowercase=$$$keyword;format="lowercase"$$"""
         )
       }
       .mkString("\n")
