@@ -1,5 +1,5 @@
 ThisBuild / scalaVersion     := "2.12.8"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
+ThisBuild / version          := "1.0.0-SNAPSHOT"
 ThisBuild / organization     := "com.github.arturopala"
 ThisBuild / organizationName := "Artur Opala"
 ThisBuild / startYear := Some(2019)
@@ -19,5 +19,7 @@ lazy val root = (project in file("."))
       "org.scalatest" %% "scalatest" % "3.0.5" % Test
     ),
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
-    excludeFilter in (Compile, unmanagedResources) := NothingFilter
+    excludeFilter in (Compile, unmanagedResources) := NothingFilter,
+    scalafmtOnCompile in Compile := true,
+    scalafmtOnCompile in Test := true
   )

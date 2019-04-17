@@ -5,7 +5,5 @@ lazy val root = (project in file(".")).settings(
   name := "$templateName$",
   description := "$templateDescription$",
   resolvers += Resolver.url("typesafe", url("http://repo.typesafe.com/typesafe/ivy-releases/"))(
-    Resolver.ivyStylePatterns),
-  scalafmtOnCompile in Compile := true,
-  scalafmtOnCompile in Test := true
+    Resolver.ivyStylePatterns)
 )
