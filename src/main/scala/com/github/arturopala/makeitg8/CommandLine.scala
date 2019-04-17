@@ -34,13 +34,14 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   mainOptions = Seq(sourcePath, targetPath)
 
-  verify()
-  validatePathIsDirectory(sourcePath)
-  validatePathExists(sourcePath)
-
   override def onError(e: Throwable): Unit = e match {
     case _: RequiredOptionNotFound => printHelp()
     case _: UnknownOption          => printHelp()
     case NonFatal(ex)              => super.onError(ex)
   }
+
+  validatePathIsDirectory(sourcePath)
+  validatePathExists(sourcePath)
+
+  verify()
 }
