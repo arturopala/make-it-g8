@@ -28,58 +28,69 @@ import scala.util.control.NonFatal
 
 object MakeItG8 extends App with MakeItG8Creator {
 
-  Try(createG8Template(readConfig())).fold(
-    _ => println("Sorry, something went wrong"),
+  Try {
+    readConfig().fold(_ => {
+      println()
+      println("Sorry, your command is missing something, consult the doc and try again!")
+      System.exit(-1)
+    }, config => createG8Template(config))
+  }.fold(
+    _ => {
+      println()
+      println("Sorry, something went wrong, check the log and try again!")
+      System.exit(-1)
+    },
     _ => println("Done.")
   )
 
-  def readConfig(): MakeItG8Config = {
+  def readConfig(): Either[Throwable, MakeItG8Config] =
+    Try {
 
-    import scala.collection.JavaConverters._
+      import scala.collection.JavaConverters._
 
-    //---------------------------------------
-    // READ CONFIGURATION AND COMMAND LINE
-    //---------------------------------------
+      //---------------------------------------
+      // READ CONFIGURATION AND COMMAND LINE
+      //---------------------------------------
 
-    val commandLine = new CommandLine(args)
-    val config: Config = ConfigFactory.load()
-    val ignoredPaths: List[String] = config.getStringList("source.ignore").asScala.toList
-    val sourceFolder = File(commandLine.sourcePath())
-    val targetFolder = File(
-      commandLine.targetPath
-        .map(_.toString)
-        .getOrElse(s"${sourceFolder.pathAsString}.g8"))
-    val packageName: String = commandLine.packageName()
-    val keywordValueMap: Map[String, String] = commandLine.keywords
-
-    val g8BuildTemplateSource = config.getString("build.source")
-    val g8BuildTemplateResources = config.getStringList("build.resources").asScala.toList
-    val templateName =
-      commandLine.templateName.getOrElse(
+      val commandLine = new CommandLine(args)
+      val config: Config = ConfigFactory.load()
+      val ignoredPaths: List[String] = config.getStringList("source.ignore").asScala.toList
+      val sourceFolder = File(commandLine.sourcePath())
+      val targetFolder = File(
         commandLine.targetPath
-          .map(_.getFileName.toString)
-          .getOrElse(sourceFolder.name))
-    val scriptTestTarget = config.getString("build.test.folder")
-    val scriptTestCommand = config.getString("build.test.command")
+          .map(_.toString)
+          .getOrElse(s"${sourceFolder.pathAsString}.g8"))
+      val packageName: String = commandLine.packageName()
+      val keywordValueMap: Map[String, String] = commandLine.keywords
 
-    MakeItG8Config(
-      sourceFolder,
-      targetFolder,
-      ignoredPaths,
-      templateName,
-      packageName,
-      keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")),
-      g8BuildTemplateSource,
-      g8BuildTemplateResources,
-      scriptTestTarget,
-      scriptTestCommand,
-      config.getStringList("build.test.before").asScala.toList,
-      commandLine.clearBuildFiles(),
-      commandLine.templateDescription
-        .map(URLDecoder.decode(_, "utf-8"))
-        .getOrElse(templateName)
-    )
-  }
+      val g8BuildTemplateSource = config.getString("build.source")
+      val g8BuildTemplateResources = config.getStringList("build.resources").asScala.toList
+      val templateName =
+        commandLine.templateName.getOrElse(
+          commandLine.targetPath
+            .map(_.getFileName.toString)
+            .getOrElse(sourceFolder.name))
+      val scriptTestTarget = config.getString("build.test.folder")
+      val scriptTestCommand = config.getString("build.test.command")
+
+      MakeItG8Config(
+        sourceFolder,
+        targetFolder,
+        ignoredPaths,
+        templateName,
+        packageName,
+        keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")),
+        g8BuildTemplateSource,
+        g8BuildTemplateResources,
+        scriptTestTarget,
+        scriptTestCommand,
+        config.getStringList("build.test.before").asScala.toList,
+        commandLine.clearBuildFiles(),
+        commandLine.templateDescription
+          .map(URLDecoder.decode(_, "utf-8"))
+          .getOrElse(templateName)
+      )
+    }.toEither
 }
 
 import org.rogach.scallop._
@@ -108,7 +119,6 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
       |
       |Options:
       |""".stripMargin)
-  footer("\nFor all other tricks, consult the README!")
 
   mainOptions = Seq(sourcePath, targetPath)
 
