@@ -1,5 +1,4 @@
 ThisBuild / scalaVersion     := "2.12.8"
-ThisBuild / version          := "1.0.0-SNAPSHOT"
 ThisBuild / organization     := "com.github.arturopala"
 ThisBuild / organizationName := "Artur Opala"
 ThisBuild / startYear := Some(2019)
@@ -21,5 +20,6 @@ lazy val root = (project in file("."))
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
     scalafmtOnCompile in Compile := true,
-    scalafmtOnCompile in Test := true
+    scalafmtOnCompile in Test := true,
+    releaseVersionBump := sbtrelease.Version.Bump.Minor
   )

@@ -115,7 +115,7 @@ trait MakeItG8Creator {
           "$templateDescription$" -> config.templateDescription,
           "$gitRepositoryName$"   -> config.templateName,
           "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
-          "$exampleTargetTree$"   -> PathsTree.draw(PathsTree.compute(sourcePaths)),
+          "$exampleTargetTree$"   -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
           "$g8CommandLineArgs$" -> s"""${config.keywordValueMap
             .map { case (k, v) => s"""--$k="$v"""" }
             .mkString(" ")}""",
