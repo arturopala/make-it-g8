@@ -124,8 +124,8 @@ trait MakeItG8Creator {
           "$testCommand$"      -> config.scriptTestCommand,
           "$beforeTest$"       -> config.scriptBeforeTest.mkString("\n\t"),
           "$makeItG8CommandLine$" ->
-            s"""sbt "run --noclear -s ../../${config.scriptTestTarget}/$testTemplateName -t ../.. --description ${URLEncoder
-              .encode(config.templateDescription, "utf-8")} -p ${config.packageName} -K ${config.keywordValueMap
+            s"""sbt "run --noclear --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} --package ${config.packageName} --description ${URLEncoder
+              .encode(config.templateDescription, "utf-8")} -K ${config.keywordValueMap
               .map {
                 case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }

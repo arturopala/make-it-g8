@@ -25,7 +25,7 @@ How to test the template and generate an example project
 
 * Run `./test.sh` 
 
-An example project will be then created and tested in `$testTargetFolder$/$templateName$`
+An example project will be then created and tested in `$testTargetFolder$/$testTemplateName$`
 
 How to modify the template?
 ==
