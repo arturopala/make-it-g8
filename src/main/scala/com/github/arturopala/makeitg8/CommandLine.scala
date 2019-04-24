@@ -26,12 +26,13 @@ import scala.util.control.NonFatal
 class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   val sourcePath = opt[Path](name = "source", short = 's', required = true, descr = "Source code path")
-  val targetPath = opt[Path](name = "target", short = 't', descr = "Template target path")
-  val templateName = opt[String](name = "name", short = 'n', descr = "Template name")
   val packageName =
     opt[String](name = "package", short = 'p', descr = "Source code base package name", required = true)
+
+  val targetPath = opt[Path](name = "target", short = 't', descr = "Template target path")
+  val templateName = opt[String](name = "name", short = 'n', descr = "Template name")
   val keywords =
-    props[String](name = 'K', keyName = "variable", valueName = "text", descr = "Text chunks to parametrize")
+    props[String](name = 'K', keyName = "placeholder", valueName = "text", descr = "Text chunks to parametrize")
   val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
 
   val clearBuildFiles = toggle(
@@ -56,7 +57,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
       |Options:
       |""".stripMargin)
 
-  mainOptions = Seq(sourcePath, targetPath)
+  mainOptions = Seq(sourcePath, packageName)
 
   override def onError(e: Throwable): Unit = e match {
     case _: RequiredOptionNotFound => printHelp()

@@ -27,19 +27,22 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
     
     Options:
     
-      -s, --source  <arg>                  Source code path
-      -t, --target  <arg>                  Template target path
-      
-      -Kvariable=text [variable=text]...   Text chunks to parametrize
+      -s, --source  <arg>                        Source code path
+      -p, --package  <arg>                       Source code base package name
     
-      -c, --clear                          Clear target folder
-          --noclear                        Do not clear whole target folder, only
-                                           src/main/g8 subfolder`
-      -d, --description  <arg>             Template description
-      -n, --name  <arg>                    Template name
-      -p, --package  <arg>                 Source code base package name
-      -h, --help                           Show help message
-      -v, --version                        Show version of this program
+      -t, --target  <arg>                        Template target path
+      -n, --name  <arg>                          Template name
+      -K placeholder=text [placeholder=text]...  Text chunks to parametrize
+      
+      -c, --clear                                Clear target folder
+          --noclear                              Do not clear whole target folder,
+                                                 only src/main/g8 subfolder
+      -d, --description  <arg>                   Template description
+      -r, --readme                               Create readme
+          --noreadme                             Do not create/update readme
+          
+      -h, --help                                 Show help message
+      -v, --version                              Show version of this program
       
 ## Example templates created with make-it-g8
 
