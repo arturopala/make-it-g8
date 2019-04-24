@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-if [ -f ./build.sbt ] && [ -d ./src/main/g8 ]; then
+if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
 
    mkdir -p target
    cd target
-   if [ -d .makeitg8 ] && [ -d .makeitg8/.git ] ; then
+   if [[ -d .makeitg8 ]] && [[ -d .makeitg8/.git ]] ; then
         cd .makeitg8
         git pull origin master
    else

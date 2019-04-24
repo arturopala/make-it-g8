@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [ -f ./build.sbt ] && [ -d ./src/main/g8 ]; then
+if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
 
     export TEMPLATE=`pwd | xargs basename`
     echo ${TEMPLATE}
