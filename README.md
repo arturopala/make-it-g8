@@ -48,5 +48,6 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 * https://github.com/hmrc/template-play-26-frontend.g8
 * https://github.com/hmrc/template-play-26-frontend-fsm.g8
+* https://github.com/hmrc/template-play-26-microservice.g8
     
 
