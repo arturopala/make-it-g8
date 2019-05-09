@@ -1,1 +1,1 @@
-version := "1.0.0-SNAPSHOT"
+version in ThisBuild := "$releaseVersion"
