@@ -21,5 +21,6 @@ lazy val root = (project in file("."))
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
     scalafmtOnCompile in Compile := true,
     scalafmtOnCompile in Test := true,
-    releaseVersionBump := sbtrelease.Version.Bump.Minor
+    releaseVersionBump := sbtrelease.Version.Bump.Minor,
+    publishTo := sonatypePublishTo.value
   )
