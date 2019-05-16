@@ -21,7 +21,13 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 * adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
 * generates README with the template usage guide and an example project files tree picture
 
-## Run locally
+## Prerequisites
+
+* Java >= 8
+* SBT >= 1.2.x <https://www.scala-sbt.org/release/docs/Setup.html>
+* giter8 (g8) >= 0.11.0 <http://www.foundweekends.org/giter8/setup.html>
+
+## Run the tool locally
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
