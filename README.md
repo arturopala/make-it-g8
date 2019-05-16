@@ -27,7 +27,9 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 * SBT >= 1.2.x <https://www.scala-sbt.org/release/docs/Setup.html>
 * giter8 (g8) >= 0.11.0 <http://www.foundweekends.org/giter8/setup.html>
 
-## Run the tool locally
+## Usage
+
+### Run the tool locally
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
@@ -51,6 +53,12 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
           
       -h, --help                                 Show help message
       -v, --version                              Show version of this program
+    
+### Use it as a library
+
+make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
+
+    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.1.0"      
       
 ## Example templates created with make-it-g8
 
