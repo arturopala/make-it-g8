@@ -82,7 +82,8 @@ trait MakeItG8Creator {
               None
             } else {
               target.createFileIfNotExists(createParents = true)
-              target.write(TemplateUtils.replace(source.contentAsString, contentFilesReplacements))
+              target.write(
+                TemplateUtils.replace(TemplateUtils.escape(source.contentAsString), contentFilesReplacements))
               Some(sourcePath)
             }
           } else None
@@ -147,12 +148,10 @@ trait MakeItG8Creator {
           val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
           println(s"Adding build file $path")
           targetFile.createFileIfNotExists(createParents = true)
-          val lines = content.lines
           targetFile
             .clear()
-            .printLines(lines.map(line =>
-              buildFilesReplacements
-                .foldLeft(line) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }))
+            .write(TemplateUtils
+              .replace(content, buildFilesReplacements))
         } else {
           println(s"Skipping $path")
         }

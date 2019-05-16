@@ -101,6 +101,14 @@ class TemplateUtilsSpec extends WordSpec with Matchers {
           |999
         """.stripMargin
     }
+
+    "amend the text using provided replacements when overlap" in {
+      TemplateUtils.replace("FooFoo Bar", Seq("Foo"    -> "$foo$", "FooF"  -> "$foof$")) shouldBe "$foof$oo Bar"
+      TemplateUtils.replace("FooFooFoo Bar", Seq("Foo" -> "$foo$", "FooF"  -> "$foof$")) shouldBe "$foof$oo$foo$ Bar"
+      TemplateUtils.replace("FooFooFoo Bar", Seq("Foo" -> "FooFoo", "FooF" -> "FooFF")) shouldBe "FooFFooFooFoo Bar"
+      TemplateUtils
+        .replace("FooBarFooFoo Bar", Seq("Foo" -> "FooBar", "FooBar" -> "Foo", "Bar" -> "Foo")) shouldBe "FooFooBarFooBar Foo"
+    }
   }
 
 }

@@ -31,11 +31,43 @@ object TemplateUtils {
       replacements
         .foldLeft(path.toString) { case (a, (f, t)) => a.replaceAllLiterally(f, t) })
 
-  def replace(text: String, replacements: Seq[(String, String)]): String =
+  def escape(text: String): String =
+    text
+      .replaceAllLiterally("\\", "\\\\")
+      .replaceAllLiterally("$", "\\$")
+
+  sealed trait Part {
+    val value: String
+  }
+
+  case class Text(value: String) extends Part {
+    def replace(from: String, to: String): Seq[Part] = {
+      val i0 = value.indexOf(from)
+      if (i0 < 0) Seq(this)
+      else
+        Seq(
+          Text(value.substring(0, i0)),
+          Replacement(to)
+        ) ++ Text(value.substring(i0 + from.length)).replace(from, to)
+    }
+  }
+
+  case class Replacement(value: String) extends Part
+
+  def replace(text: String, replacements: Seq[(String, String)]): String = {
+    val initial: Seq[Part] = Seq(Text(text))
     replacements
-      .foldLeft(text.replaceAllLiterally("\\", "\\\\").replaceAllLiterally("$", "\\$")) {
-        case (a, (f, t)) => a.replaceAllLiterally(f, t)
+      .sortBy { case (f, _) => -f.length }
+      .foldLeft(initial) {
+        case (seq, (from, to)) =>
+          seq.flatMap {
+            case r: Replacement => Seq(r)
+            case t: Text        => t.replace(from, to)
+          }
       }
+      .map(_.value)
+      .mkString
+  }
 
   def prepareKeywordsReplacements(keywords: Seq[String], keywordValueMap: Map[String, String]): Seq[(String, String)] =
     keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap.getOrElse(k, k)))
