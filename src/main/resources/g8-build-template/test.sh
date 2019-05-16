@@ -7,7 +7,7 @@ if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
     mkdir -p $testTargetFolder$
     cd $testTargetFolder$
     sudo rm -r $testTemplateName$
-    g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ "$@"
+    g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ -o $testTemplateName$ "$@"
     cd $testTemplateName$
     $beforeTest$
     $testCommand$

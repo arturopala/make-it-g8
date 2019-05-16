@@ -106,10 +106,8 @@ trait MakeItG8Creator {
       //---------------------------------------
 
       val buildFilesReplacements = {
-        val testTemplateName = contentFilesReplacements
-          .find(_._2 == s"$$${keywords.minBy(_.length)}Hyphen$$")
-          .map(_._1)
-          .getOrElse(config.sourceFolder.path.getFileName.toString)
+        val testTemplateName = config.templateName.replace(".g8", "")
+
         Seq(
           "$templateName$"        -> config.templateName,
           "$templateDescription$" -> config.templateDescription,
