@@ -107,7 +107,9 @@ trait MakeItG8Creator {
       //---------------------------------------
 
       val buildFilesReplacements = {
-        val testTemplateName = config.templateName.replace(".g8", "")
+        val testTemplateName = config.templateName
+          .replace(".g8", "")
+          .replaceFirst("(-*?)template(-*?)", "")
 
         Seq(
           "$templateName$"        -> config.templateName,
