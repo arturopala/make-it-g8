@@ -144,14 +144,16 @@ trait MakeItG8Creator {
 
       config.g8BuildTemplateResources.foreach { path =>
         if (config.createReadme || path != "README.md") {
-          val targetFile = File(config.targetFolder.path.resolve(path))
-          val content = Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path")
-          println(s"Adding build file $path")
-          targetFile.createFileIfNotExists(createParents = true)
-          targetFile
-            .clear()
-            .write(TemplateUtils
-              .replace(content, buildFilesReplacements))
+          Try(Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path"))
+            .map { content =>
+              println(s"Adding build file $path")
+              val targetFile = File(config.targetFolder.path.resolve(path))
+              targetFile.createFileIfNotExists(createParents = true)
+              targetFile
+                .clear()
+                .write(TemplateUtils
+                  .replace(content, buildFilesReplacements))
+            }
         } else {
           println(s"Skipping $path")
         }
