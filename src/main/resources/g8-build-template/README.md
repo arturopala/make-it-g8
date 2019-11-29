@@ -30,11 +30,11 @@ An example project will be then created and tested in `$testTargetFolder$/$testT
 How to modify the template?
 ==
 
-Change the template sources blindly, 
-be careful about placeholders and run `./test.sh` to validate the changes
+Change the template sources in `/src/main/g8` as you need, 
+be careful about placeholders, and run `./test.sh` to validate the changes
 or ... 
 
-Run `./test.sh`, go to `$testTargetFolder$`, 
+Run `./test.sh`, go to the `$testTargetFolder$`, 
 change the generated example project, 
 build and test it running `$testCommand$`,
 and finally run `./update-g8.sh` to port changes back to the template.
@@ -43,7 +43,7 @@ What is in the template?
 ==
 
 Assuming the command above 
-the template will supply the following values for placeholders:
+the template will supply the following values for the placeholders:
 
     $placeholders$
 
