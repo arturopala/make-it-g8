@@ -30,14 +30,19 @@ An example project will be then created and tested in `$testTargetFolder$/$testT
 How to modify the template?
 ==
 
-Change the template sources in `/src/main/g8` as you need, 
-be careful about placeholders, and run `./test.sh` to validate the changes
-or ... 
+ * review template sources in `/src/main/g8`
+ * modify files as you need, but be careful about placeholders, paths and so on
+ * run `./test.sh` in template root to validate your changes
+ 
+or (safer) ...
 
-Run `./test.sh`, go to the `$testTargetFolder$`, 
-change the generated example project, 
-build and test it running `$testCommand$`,
-and finally run `./update-g8.sh` to port changes back to the template.
+* run `./test.sh` first
+* open `$testTargetFolder$/$testTemplateName$` in your preferred IDE, 
+* modify the generated example project as you wish, 
+* build and test it as usual, you can run `$testCommand$`,
+* when you are done switch back to the template root
+* run `./update-g8.sh` in order to port your changes back to the template.
+* run `./test.sh` again to validate your changes
 
 What is in the template?
 ==
