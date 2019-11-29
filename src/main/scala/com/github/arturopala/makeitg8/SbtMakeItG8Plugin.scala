@@ -34,6 +34,7 @@ object SbtMakeItG8Plugin extends AutoPlugin {
     val makeItG8IgnoredPaths = settingKey[List[String]]("Source path prefixes to ignore")
     val makeItG8TemplateName = settingKey[String]("Template name")
     val makeItG8TemplateDescription = settingKey[String]("Template description")
+    val makeItG8CustomReadmeHeaderPath = settingKey[Option[String]]("Custom README.md header path")
     val makeItG8PackageName = settingKey[String]("Source code package name to parametrize")
     val makeItG8KeywordValueMap = settingKey[Map[String, String]]("Text chunks to parametrize by key word")
     val makeItG8BuildTemplateSource = settingKey[String]("Template project build resources root")
@@ -81,7 +82,8 @@ object SbtMakeItG8Plugin extends AutoPlugin {
           makeItG8ScriptBeforeTest.value,
           clearTargetFolder = false,
           makeItG8CreateReadme.value,
-          makeItG8TemplateDescription.value
+          makeItG8TemplateDescription.value,
+          makeItG8CustomReadmeHeaderPath.value
         )
         MakeItG8Creator.createG8Template(config)
         makeItG8TargetFolder.value / "src" / "main" / "g8"

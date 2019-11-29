@@ -47,7 +47,9 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
       -c, --clear                                Clear target folder
           --noclear                              Do not clear whole target folder,
                                                  only src/main/g8 subfolder
-      -d, --description  <arg>                   Template description
+      -d, --description  <arg>                   Single-line template description, use + as a space
+      -x, --custom-readme-header-path <path>     Custom README.md header path
+      
       -r, --readme                               Create readme
           --noreadme                             Do not create/update readme
           

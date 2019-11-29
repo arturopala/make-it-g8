@@ -109,6 +109,15 @@ trait MakeItG8Creator {
       val buildFilesReplacements = {
         val testTemplateName = config.sourceFolder.name
 
+        val customReadmeHeader: Option[String] = config.customReadmeHeaderPath.flatMap { path =>
+          val file = File(config.sourceFolder.path.resolve(path))
+          if (file.exists && file.isRegularFile) Option(file.contentAsString)
+          else None
+        }
+
+        val customReadmeHeaderPathOpt: String =
+          config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path="$path"""").getOrElse("")
+
         Seq(
           "$templateName$"        -> config.templateName,
           "$templateDescription$" -> config.templateDescription,
@@ -124,11 +133,12 @@ trait MakeItG8Creator {
           "$beforeTest$"       -> config.scriptBeforeTest.mkString("\n\t"),
           "$makeItG8CommandLine$" ->
             s"""sbt "run --noclear --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} --package ${config.packageName} --description ${URLEncoder
-              .encode(config.templateDescription, "utf-8")} -K ${config.keywordValueMap
+              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
               .map {
                 case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
-              .mkString(" ")}" """
+              .mkString(" ")}" """,
+          "$customReadmeHeader$" -> customReadmeHeader.getOrElse("")
         )
       }
 

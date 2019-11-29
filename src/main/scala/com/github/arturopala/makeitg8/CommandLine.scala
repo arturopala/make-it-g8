@@ -34,6 +34,12 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
   val keywords =
     props[String](name = 'K', keyName = "placeholder", valueName = "text", descr = "Text chunks to parametrize")
   val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
+  val customReadmeHeaderPath =
+    opt[String](
+      name = "custom-readme-header-path",
+      short = 'x',
+      descr = "Custom README.md header path",
+      argName = "path")
 
   val clearBuildFiles = toggle(
     name = "clear",

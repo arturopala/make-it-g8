@@ -91,7 +91,8 @@ object MakeItG8 extends App with MakeItG8Creator {
         commandLine.createReadme(),
         commandLine.templateDescription
           .map(URLDecoder.decode(_, "utf-8"))
-          .getOrElse(templateName)
+          .getOrElse(templateName),
+        commandLine.customReadmeHeaderPath.toOption
       )
     }.toEither
 }

@@ -32,4 +32,5 @@ case class MakeItG8Config(
   scriptBeforeTest: List[String],
   clearTargetFolder: Boolean,
   createReadme: Boolean,
-  templateDescription: String)
+  templateDescription: String,
+  customReadmeHeaderPath: Option[String])
