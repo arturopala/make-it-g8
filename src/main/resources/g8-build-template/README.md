@@ -1,8 +1,6 @@
 A [Giter8](http://www.foundweekends.org/giter8/) template for creating $templateDescription$
-
 $customReadmeHeader$
-
-To create a new project based on the template:
+How to create a new project based on the template?
 ==
 
 * Install g8 commandline tool (http://www.foundweekends.org/giter8/setup.html)
@@ -22,7 +20,7 @@ and then
     `$testCommand$`
     
 
-How to test the template and generate an example project 
+How to test the template and generate an example project?
 ==
 
 * Run `./test.sh` 
