@@ -116,7 +116,7 @@ trait MakeItG8Creator {
         }
 
         val customReadmeHeaderPathOpt: String =
-          config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path="$path"""").getOrElse("")
+          config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path "$path"""").getOrElse("")
 
         Seq(
           "$templateName$"        -> config.templateName,

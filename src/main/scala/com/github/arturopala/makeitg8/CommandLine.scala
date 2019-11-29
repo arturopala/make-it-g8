@@ -58,7 +58,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   version("MakeItG8 - convert your project into a giter8 template")
   banner(
-    """Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K placeholder=textURLEncoded]"
+    """Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [--custom-readme-header-path {PATH}] [-K placeholder=textURLEncoded]"
       |
       |Options:
       |""".stripMargin)
