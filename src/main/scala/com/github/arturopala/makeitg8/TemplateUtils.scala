@@ -112,7 +112,7 @@ object TemplateUtils {
           s"""$keyword=${keywordValueMap(keyword)}""",
           s"""${keyword}Camel=$$$keyword;format="Camel"$$""",
           s"""${keyword}camel=$$$keyword;format="camel"$$""",
-          s"""${keyword}Snake=$$$keyword;format="snake"$$""",
+          s"""${keyword}Snake=$$$keyword;format="snake,uppercase"$$""",
           s"""${keyword}Package=$$$keyword;format="package"$$""",
           s"""${keyword}PackageLowercase=$$$keyword;format="lowercase,package"$$""",
           s"""${keyword}Packaged=$$$keyword;format="packaged"$$""",
