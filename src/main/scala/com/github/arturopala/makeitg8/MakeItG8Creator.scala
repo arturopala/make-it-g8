@@ -124,7 +124,7 @@ trait MakeItG8Creator {
           "$gitRepositoryName$"   -> config.templateName,
           "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
           "$exampleTargetTree$"   -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
-          "$g8CommandLineArgs$" -> s"""${config.keywordValueMap
+          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ Seq("package" -> config.packageName))
             .map { case (k, v) => s"""--$k="$v"""" }
             .mkString(" ")}""",
           "$testTargetFolder$" -> config.scriptTestTarget,
