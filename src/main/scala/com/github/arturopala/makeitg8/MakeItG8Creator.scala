@@ -126,7 +126,7 @@ trait MakeItG8Creator {
           "$exampleTargetTree$"   -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
           "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ Seq("package" -> config.packageName))
             .map { case (k, v) => s"""--$k="$v"""" }
-            .mkString(" ")}""",
+            .mkString(" ")} -o $testTemplateName""",
           "$testTargetFolder$" -> config.scriptTestTarget,
           "$testTemplateName$" -> testTemplateName,
           "$testCommand$"      -> config.scriptTestCommand,
