@@ -18,9 +18,10 @@ package com.github.arturopala.makeitg8
 
 import java.nio.file.Paths
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.matchers.should.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-class FileTreeSpec extends WordSpec with Matchers {
+class FileTreeSpec extends AnyWordSpec with Matchers {
 
   "FileTree" should {
     "compute a tree" in {

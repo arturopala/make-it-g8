@@ -24,7 +24,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 ## Prerequisites
 
 * Java >= 8
-* SBT >= 1.2.x <https://www.scala-sbt.org/release/docs/Setup.html>
+* SBT >= 1.3.x <https://www.scala-sbt.org/release/docs/Setup.html>
 * giter8 (g8) >= 0.11.0 <http://www.foundweekends.org/giter8/setup.html>
 
 ## Usage
@@ -60,7 +60,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.1.0"      
+    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.4.0"      
       
 ## Example templates created with make-it-g8
 

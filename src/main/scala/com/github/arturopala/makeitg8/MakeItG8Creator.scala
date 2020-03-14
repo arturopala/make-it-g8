@@ -137,7 +137,7 @@ trait MakeItG8Creator {
               .map {
                 case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
-              .mkString(" ")}" """,
+              .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """,
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse("")
         )
       }
@@ -157,13 +157,17 @@ trait MakeItG8Creator {
           Try(Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path"))
             .map { content =>
               println(s"Adding build file $path")
-              val targetFile = File(config.targetFolder.path.resolve(path))
+              val targetFile = File(
+                config.targetFolder.path
+                  .resolve(path.replace("__", ".")))
               targetFile.createFileIfNotExists(createParents = true)
               targetFile
                 .clear()
                 .write(TemplateUtils
                   .replace(content, buildFilesReplacements))
-            }
+            } orElse Try {
+            println(s"Failed to add build file $path")
+          }
         } else {
           println(s"Skipping $path")
         }
