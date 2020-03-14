@@ -74,30 +74,36 @@ object TemplateUtils {
 
   def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
     val parts = parseKeyword(value)
+    val lowercaseParts = parts.map(lowercase)
+    val uppercaseParts = parts.map(uppercase)
+
     if (parts.size == 1) {
       if (Try(parts.head.toInt).isSuccess)
         Seq(value -> s"$$$keyword$$")
       else
         Seq(
-          parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
-          decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
-          parts.map(lowercase).mkString(" ")                              -> s"$$${keyword}Lowercase$$",
-          parts.map(uppercase).mkString(" ")                              -> s"$$${keyword}Uppercase$$",
-          value                                                           -> s"$$$keyword$$"
+          lowercaseParts.map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
+          decapitalize(lowercaseParts.map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
+          lowercaseParts.mkString(" ")                              -> s"$$${keyword}Lowercase$$",
+          uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$",
+          value                                                     -> s"$$$keyword$$"
         )
     } else
       Seq(
-        parts.map(lowercase).map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
-        decapitalize(parts.map(lowercase).map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
-        parts.map(uppercase).mkString("_")                              -> s"$$${keyword}Snake$$",
-        parts.mkString(".")                                             -> s"$$${keyword}Package$$",
-        parts.map(lowercase).mkString(".")                              -> s"$$${keyword}PackageLowercase$$",
-        parts.mkString("/")                                             -> s"$$${keyword}Packaged$$",
-        parts.map(lowercase).mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
-        parts.map(lowercase).mkString("-")                              -> s"$$${keyword}Hyphen$$",
-        parts.map(lowercase).mkString(" ")                              -> s"$$${keyword}Lowercase$$",
-        parts.map(uppercase).mkString(" ")                              -> s"$$${keyword}Uppercase$$",
-        value                                                           -> s"$$$keyword$$"
+        lowercaseParts.map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
+        decapitalize(lowercaseParts.map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
+        lowercaseParts.mkString("")                               -> s"$$${keyword}NoSpaceLowercase$$",
+        uppercaseParts.mkString("")                               -> s"$$${keyword}NoSpaceUppercase$$",
+        lowercaseParts.mkString("_")                              -> s"$$${keyword}snake$$",
+        uppercaseParts.mkString("_")                              -> s"$$${keyword}Snake$$",
+        parts.mkString(".")                                       -> s"$$${keyword}Package$$",
+        lowercaseParts.mkString(".")                              -> s"$$${keyword}PackageLowercase$$",
+        parts.mkString("/")                                       -> s"$$${keyword}Packaged$$",
+        lowercaseParts.mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
+        lowercaseParts.mkString("-")                              -> s"$$${keyword}Hyphen$$",
+        lowercaseParts.mkString(" ")                              -> s"$$${keyword}Lowercase$$",
+        uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$",
+        value                                                     -> s"$$$keyword$$"
       )
   }
 
@@ -112,7 +118,10 @@ object TemplateUtils {
           s"""$keyword=${keywordValueMap(keyword)}""",
           s"""${keyword}Camel=$$$keyword;format="Camel"$$""",
           s"""${keyword}camel=$$$keyword;format="camel"$$""",
+          s"""${keyword}NoSpaceLowercase=$$$keyword;format="camel,lowercase"$$""",
+          s"""${keyword}NoSpaceUppercase=$$$keyword;format="Camel,uppercase"$$""",
           s"""${keyword}Snake=$$$keyword;format="snake,uppercase"$$""",
+          s"""${keyword}snake=$$$keyword;format="snake,lowercase"$$""",
           s"""${keyword}Package=$$$keyword;format="package"$$""",
           s"""${keyword}PackageLowercase=$$$keyword;format="lowercase,package"$$""",
           s"""${keyword}Packaged=$$$keyword;format="packaged"$$""",

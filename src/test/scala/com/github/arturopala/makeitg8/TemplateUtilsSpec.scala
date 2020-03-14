@@ -39,6 +39,9 @@ class TemplateUtilsSpec extends WordSpec with Matchers {
       TemplateUtils.prepareKeywordReplacement("key", "Foo Bar") shouldBe List(
         ("FooBar", "$keyCamel$"),
         ("fooBar", "$keycamel$"),
+        ("foobar", "$keyNoSpaceLowercase$"),
+        ("FOOBAR", "$keyNoSpaceUppercase$"),
+        ("foo_bar", "$keysnake$"),
         ("FOO_BAR", "$keySnake$"),
         ("Foo.Bar", "$keyPackage$"),
         ("foo.bar", "$keyPackageLowercase$"),

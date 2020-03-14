@@ -14,8 +14,8 @@ lazy val root = (project in file("."))
     libraryDependencies ++= Seq(
       "com.typesafe" % "config" % "1.4.0",
       "com.github.pathikrit" %% "better-files" % "3.8.0",
-      "org.rogach" %% "scallop" % "3.3.1",
-      "org.scalatest" %% "scalatest" % "3.0.8" % Test
+      "org.rogach" %% "scallop" % "3.4.0",
+      "org.scalatest" %% "scalatest" % "3.1.1" % Test
     ),
     scriptedLaunchOpts += ("-Dplugin.version=" + version.value),
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
