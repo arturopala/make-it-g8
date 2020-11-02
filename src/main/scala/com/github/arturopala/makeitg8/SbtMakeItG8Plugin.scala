@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -62,7 +62,8 @@ object SbtMakeItG8Plugin extends AutoPlugin {
         "project/target",
         "project/project",
         "logs",
-        "make-it-g8"),
+        "make-it-g8"
+      ),
       makeItG8TemplateName := name.value.toLowerCase.replaceAllLiterally("-", "") + ".g8",
       makeItG8PackageName := organization.value + "." + name.value.toLowerCase.replaceAllLiterally("-", ""),
       makeItG8KeywordValueMap := Map("description" -> description.value),

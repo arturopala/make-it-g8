@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -42,7 +42,7 @@ object MakeItG8 extends App with MakeItG8Creator {
           println("Done.")
           System.exit(0)
         }
-    )
+      )
   )
 
   def readConfig(): Either[Throwable, MakeItG8Config] =
@@ -61,7 +61,8 @@ object MakeItG8 extends App with MakeItG8Creator {
       val targetFolder = File(
         commandLine.targetPath
           .map(_.toString)
-          .getOrElse(s"${sourceFolder.pathAsString}.g8"))
+          .getOrElse(s"${sourceFolder.pathAsString}.g8")
+      )
       val packageName: String = commandLine.packageName()
       val keywordValueMap: Map[String, String] = commandLine.keywords
 
@@ -71,7 +72,8 @@ object MakeItG8 extends App with MakeItG8Creator {
         commandLine.templateName.getOrElse(
           commandLine.targetPath
             .map(_.getFileName.toString)
-            .getOrElse(sourceFolder.name))
+            .getOrElse(sourceFolder.name)
+        )
       val scriptTestTarget = config.getString("build.test.folder")
       val scriptTestCommand = config.getString("build.test.command")
 

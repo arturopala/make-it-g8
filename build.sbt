@@ -1,7 +1,7 @@
 ThisBuild / scalaVersion := "2.12.12"
 ThisBuild / organization := "com.github.arturopala"
 ThisBuild / organizationName := "Artur Opala"
-ThisBuild / startYear := Some(2019)
+ThisBuild / startYear := Some(2020)
 
 lazy val root = (project in file("."))
   .enablePlugins(AutomateHeaderPlugin)

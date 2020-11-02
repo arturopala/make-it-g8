@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,7 +39,8 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
       name = "custom-readme-header-path",
       short = 'x',
       descr = "Custom README.md header path",
-      argName = "path")
+      argName = "path"
+    )
 
   val clearBuildFiles = toggle(
     name = "clear",
@@ -61,7 +62,8 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
     """Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [--custom-readme-header-path {PATH}] [-K placeholder=textURLEncoded]"
       |
       |Options:
-      |""".stripMargin)
+      |""".stripMargin
+  )
 
   mainOptions = Seq(sourcePath, packageName)
 

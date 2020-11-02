@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -95,7 +95,8 @@ class TemplateUtilsSpec extends WordSpec with Matchers {
           |
           |999
         """.stripMargin,
-        Seq("Foo" -> "$foo$", "Bar" -> "$bar$")) shouldBe
+        Seq("Foo" -> "$foo$", "Bar" -> "$bar$")
+      ) shouldBe
         """
           |$foo$
           |Zoo

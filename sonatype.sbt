@@ -1,4 +1,6 @@
 // To sync with Maven central, you need to supply the following information:
+sonatypeProfileName := "com.github.arturopala"
+
 pomExtra in Global := {
   <url>github.com/arturopala/make-it-g8</url>
   <scm>
@@ -17,19 +19,23 @@ pomExtra in Global := {
 
 import ReleaseTransformations._
 
+releaseCrossBuild := false
+releaseUseGlobalVersion := true
+releaseVersionBump := sbtrelease.Version.Bump.Minor
+
+usePgpKeyHex("D9267F3ECB3CF847330BA02AAAC19B29BEF3DCBF")
+
 releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runClean,
-  runTest,
+  releaseStepCommandAndRemaining("test"),
   setReleaseVersion,
   commitReleaseVersion,
   tagRelease,
-  ReleaseStep(action = Command.process("publishSigned", _)),
+  releaseStepCommandAndRemaining("publishSigned"),
+  releaseStepCommand("sonatypeBundleRelease"),
   setNextVersion,
   commitNextVersion,
-  ReleaseStep(action = Command.process("sonatypeRelease", _)),
   pushChanges
 )
-
-releaseUseGlobalVersion := false

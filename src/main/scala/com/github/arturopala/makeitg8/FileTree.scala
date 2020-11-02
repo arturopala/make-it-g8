@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -51,7 +51,8 @@ trait FileTree {
                 tree ::: leafs(prefix, outstandingPath)
               }
               .getOrElse(leafs(root, path)),
-            Some(path))
+            Some(path)
+          )
       }
       ._1
   }

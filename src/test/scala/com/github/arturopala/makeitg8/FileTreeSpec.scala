@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -36,23 +36,29 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
       FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala")).iterator) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))
       FileTree.compute(
-        Seq(Paths.get("/test"), Paths.get("/test", "foo", "bar.txt"), Paths.get("/test", "test.scala")).iterator) should contain
+        Seq(Paths.get("/test"), Paths.get("/test", "foo", "bar.txt"), Paths.get("/test", "test.scala")).iterator
+      ) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala"))
       FileTree.compute(
         Seq(
           Paths.get("/test"),
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("foo.bar"),
-          Paths.get("/test", "test.scala")).iterator) should contain
+          Paths.get("/test", "test.scala")
+        ).iterator
+      ) should contain
         .theSameElementsInOrderAs(List(0 -> "foo.bar", 0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala"))
       FileTree.compute(
         Seq(
           Paths.get("/test"),
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("/bar", "foo.bar"),
-          Paths.get("/test", "test.scala")).iterator) should contain
+          Paths.get("/test", "test.scala")
+        ).iterator
+      ) should contain
         .theSameElementsInOrderAs(
-          List(0 -> "bar", 1 -> "foo.bar", 0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala"))
+          List(0 -> "bar", 1 -> "foo.bar", 0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala")
+        )
     }
 
     "draw a tree 1" in {
@@ -61,7 +67,9 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test"),
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("foo.bar"),
-          Paths.get("/test", "test.scala")).iterator)
+          Paths.get("/test", "test.scala")
+        ).iterator
+      )
       FileTree.draw(pathTree) shouldBe
         """├── foo.bar
           |└── test
@@ -77,7 +85,9 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test"),
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("/bar", "foo.bar"),
-          Paths.get("/test", "test.scala")).iterator)
+          Paths.get("/test", "test.scala")
+        ).iterator
+      )
       FileTree.draw(pathTree) shouldBe
         """├── bar
           |│   └── foo.bar
@@ -101,7 +111,9 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("zoo.scala"),
           Paths.get("/foo", "zoo", "bar.txt"),
           Paths.get("/bar", "foo", "foo.bar"),
-          Paths.get("/zoo", "foo", "bar", "zoo.scala")).iterator)
+          Paths.get("/zoo", "foo", "bar", "zoo.scala")
+        ).iterator
+      )
       FileTree.draw(pathTree) shouldBe
         """├── bar
           |│   └── foo

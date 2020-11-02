@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -60,7 +60,8 @@ trait MakeItG8Creator {
         println(
           contentFilesReplacements
             .map(r => s"${r._1} -> ${r._2}")
-            .mkString("\n"))
+            .mkString("\n")
+        )
       }
 
       println()
@@ -72,8 +73,9 @@ trait MakeItG8Creator {
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
           val sourcePath = config.sourceFolder.relativize(source)
-          if (!config.ignoredPaths.exists(
-                path => sourcePath.startsWith(path) || sourcePath.getFileName.toString == path)) {
+          if (!config.ignoredPaths.exists(path =>
+                sourcePath.startsWith(path) || sourcePath.getFileName.toString == path
+              )) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
             println(s"Processing $sourcePath to $targetPath")
@@ -83,7 +85,8 @@ trait MakeItG8Creator {
             } else {
               target.createFileIfNotExists(createParents = true)
               target.write(
-                TemplateUtils.replace(TemplateUtils.escape(source.contentAsString), contentFilesReplacements))
+                TemplateUtils.replace(TemplateUtils.escape(source.contentAsString), contentFilesReplacements)
+              )
               Some(sourcePath)
             }
           } else None
@@ -100,7 +103,9 @@ trait MakeItG8Creator {
           config.sourceFolder.path.getFileName.toString,
           config.packageName,
           keywords,
-          config.keywordValueMap))
+          config.keywordValueMap
+        )
+      )
 
       //---------------------------------------
       // COPY PARAMETRISED BUILD FILES
@@ -148,7 +153,8 @@ trait MakeItG8Creator {
       println(
         buildFilesReplacements
           .map(r => s"${r._1} -> ${r._2}")
-          .mkString("\n"))
+          .mkString("\n")
+      )
 
       println()
 
@@ -159,12 +165,15 @@ trait MakeItG8Creator {
               println(s"Adding build file $path")
               val targetFile = File(
                 config.targetFolder.path
-                  .resolve(path.replace("__", ".")))
+                  .resolve(path.replace("__", "."))
+              )
               targetFile.createFileIfNotExists(createParents = true)
               targetFile
                 .clear()
-                .write(TemplateUtils
-                  .replace(content, buildFilesReplacements))
+                .write(
+                  TemplateUtils
+                    .replace(content, buildFilesReplacements)
+                )
             } orElse Try {
             println(s"Failed to add build file $path")
           }

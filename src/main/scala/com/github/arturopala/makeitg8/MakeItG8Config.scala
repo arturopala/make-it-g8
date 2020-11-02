@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -33,4 +33,5 @@ case class MakeItG8Config(
   clearTargetFolder: Boolean,
   createReadme: Boolean,
   templateDescription: String,
-  customReadmeHeaderPath: Option[String])
+  customReadmeHeaderPath: Option[String]
+)

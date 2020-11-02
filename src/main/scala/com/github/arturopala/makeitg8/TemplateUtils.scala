@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 Artur Opala
+ * Copyright 2020 Artur Opala
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -29,7 +29,8 @@ object TemplateUtils {
   def templatePathFor(path: Path, replacements: Seq[(String, String)]): Path =
     Paths.get(
       replacements
-        .foldLeft(path.toString) { case (a, (f, t)) => a.replaceAllLiterally(f, t) })
+        .foldLeft(path.toString) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }
+    )
 
   def escape(text: String): String =
     text
@@ -111,7 +112,8 @@ object TemplateUtils {
     name: String,
     packageName: String,
     keywords: Seq[String],
-    keywordValueMap: Map[String, String]): String = {
+    keywordValueMap: Map[String, String]
+  ): String = {
     val keywordsMapping = keywords
       .flatMap { keyword =>
         Seq(
