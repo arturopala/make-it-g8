@@ -22,6 +22,6 @@ lazy val root = (project in file("."))
     scalafmtOnCompile in Compile := true,
     scalafmtOnCompile in Test := true,
     releaseVersionBump := sbtrelease.Version.Bump.Minor,
-    publishTo := sonatypePublishTo.value,
+    publishTo := sonatypePublishToBundle.value,
     mainClass in (Compile, run) := Some("com.github.arturopala.makeitg8.MakeItG8")
   )
