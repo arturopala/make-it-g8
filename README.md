@@ -5,8 +5,7 @@ Tool to convert your project into giter8 template
 
 ## Motivation
 Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
-You may also want to automate template creation after changes made to the project without manually replacing package paths, file names and text chunks with the placeholders. 
-Use this tool from the command line or plug it into your SBT build.
+You may also want to automate template creation after changes made to the project without manually replacing package paths, file names and text chunks with the placeholders.
 
 ## What does it mean to create g8 template?
 The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
@@ -60,7 +59,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.4.0"      
+    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.x.0"      
       
 ## Example templates created with make-it-g8
 
