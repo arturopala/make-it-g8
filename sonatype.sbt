@@ -19,9 +19,6 @@ pomExtra in Global := {
 
 publishMavenStyle := true
 
-import xerial.sbt.Sonatype._
-sonatypeProjectHosting := Some(GitHubHosting("arturopala", "make-it-g8", "opala.artur@gmail.com"))
-
 import ReleaseTransformations._
 
 releaseCrossBuild := false
