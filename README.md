@@ -1,7 +1,7 @@
 Tool to convert your project into giter8 template
 ===
 
-![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
+![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
 
 ## Motivation
 Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
@@ -55,11 +55,11 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
       -h, --help                                 Show help message
       -v, --version                              Show version of this program
     
-### Use it as a library
+### Use as a library
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" % "make-it-g8" % "1.x.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.9.0"      
       
 ## Example templates created with make-it-g8
 
