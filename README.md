@@ -1,4 +1,4 @@
-Tool to convert your project into giter8 template
+Tool to convert your project into a giter8 template
 ===
 
 ![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
