@@ -1,5 +1,7 @@
 A [Giter8](http://www.foundweekends.org/giter8/) template for creating $templateDescription$
+
 $customReadmeHeader$
+
 How to create a new project based on the template?
 ==
 

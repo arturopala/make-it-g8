@@ -70,11 +70,14 @@ trait MakeItG8Creator {
       // COPY PARAMETRISED PROJECT FILES TO G8
       //---------------------------------------
 
+      import scala.collection.JavaConverters.asScalaIterator
+
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
-          val sourcePath = config.sourceFolder.relativize(source)
+          val sourcePath: Path = config.sourceFolder.relativize(source)
           if (!config.ignoredPaths.exists(path =>
-                sourcePath.startsWith(path) || sourcePath.getFileName.toString == path
+                (path.startsWith("/") && sourcePath.startsWith(path.drop(1))) || asScalaIterator(sourcePath.iterator)
+                  .contains(path)
               )) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
