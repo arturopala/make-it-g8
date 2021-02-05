@@ -75,9 +75,10 @@ trait MakeItG8Creator {
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
           val sourcePath: Path = config.sourceFolder.relativize(source)
+          asScalaIterator(sourcePath.iterator).foreach(println)
           if (!config.ignoredPaths.exists(path =>
-                (path.startsWith("/") && sourcePath.startsWith(path.drop(1))) || asScalaIterator(sourcePath.iterator)
-                  .contains(path)
+                (path.startsWith("/") && sourcePath.toString.startsWith(path.drop(1))) ||
+                  asScalaIterator(sourcePath.iterator).exists(_.toString == path)
               )) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
