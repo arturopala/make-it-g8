@@ -75,7 +75,6 @@ trait MakeItG8Creator {
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
           val sourcePath: Path = config.sourceFolder.relativize(source)
-          asScalaIterator(sourcePath.iterator).foreach(println)
           if (!config.ignoredPaths.exists(path =>
                 (path.startsWith("/") && sourcePath.toString.startsWith(path.drop(1))) ||
                   asScalaIterator(sourcePath.iterator).exists(_.toString == path)
