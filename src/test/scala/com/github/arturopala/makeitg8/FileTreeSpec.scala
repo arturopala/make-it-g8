@@ -25,7 +25,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
 
   "FileTree" should {
     "compute a tree" in {
-      FileTree.compute(Seq(Paths.get("test.scala")).iterator) shouldBe List(0          -> "test.scala")
+      FileTree.compute(Seq(Paths.get("test.scala")).iterator) shouldBe List(0 -> "test.scala")
       FileTree.compute(Seq(Paths.get("/test", "test.scala")).iterator) shouldBe List(0 -> "test", 1 -> "test.scala")
       FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala")).iterator) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))

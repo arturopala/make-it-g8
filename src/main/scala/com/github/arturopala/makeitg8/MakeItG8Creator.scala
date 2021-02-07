@@ -32,7 +32,8 @@ trait MakeItG8Creator {
       if (config.targetFolder.exists && config.clearTargetFolder) {
         println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
         config.targetFolder.clear()
-      } else {
+      }
+      else {
         config.targetFolder.createDirectoryIfNotExists()
 
       }
@@ -75,24 +76,28 @@ trait MakeItG8Creator {
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
           val sourcePath: Path = config.sourceFolder.relativize(source)
-          if (!config.ignoredPaths.exists(path =>
-                (path.startsWith("/") && sourcePath.toString.startsWith(path.drop(1))) ||
-                  asScalaIterator(sourcePath.iterator).exists(_.toString == path)
-              )) {
+          if (
+            !config.ignoredPaths.exists(path =>
+              (path.startsWith("/") && sourcePath.toString.startsWith(path.drop(1))) ||
+                asScalaIterator(sourcePath.iterator).exists(_.toString == path)
+            )
+          ) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
             println(s"Processing $sourcePath to $targetPath")
             if (source.isDirectory) {
               config.targetFolder.createDirectoryIfNotExists()
               None
-            } else {
+            }
+            else {
               target.createFileIfNotExists(createParents = true)
               target.write(
                 TemplateUtils.replace(TemplateUtils.escape(source.contentAsString), contentFilesReplacements)
               )
               Some(sourcePath)
             }
-          } else None
+          }
+          else None
         }
         .collect { case Some(path) => path }
 
@@ -142,8 +147,8 @@ trait MakeItG8Creator {
           "$makeItG8CommandLine$" ->
             s"""sbt "run --noclear --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} --package ${config.packageName} --description ${URLEncoder
               .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
-              .map {
-                case (k, v) => s"""$k=${URLEncoder.encode(v, "utf-8")}"""
+              .map { case (k, v) =>
+                s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
               .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """,
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse("")
@@ -180,7 +185,8 @@ trait MakeItG8Creator {
             } orElse Try {
             println(s"Failed to add build file $path")
           }
-        } else {
+        }
+        else {
           println(s"Skipping $path")
         }
       }

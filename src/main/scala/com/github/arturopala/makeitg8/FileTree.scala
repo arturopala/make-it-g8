@@ -42,17 +42,16 @@ trait FileTree {
         .map(i => (i + prefix.getNameCount, p2.getName(i).toString))
 
     sort(paths)
-      .foldLeft((List.empty[Node], Option.empty[Path])) {
-        case ((tree, prevPathOpt), path) =>
-          (
-            prevPathOpt
-              .map { prevPath =>
-                val (prefix, _, outstandingPath) = commonPrefix(root, prevPath, path)
-                tree ::: leafs(prefix, outstandingPath)
-              }
-              .getOrElse(leafs(root, path)),
-            Some(path)
-          )
+      .foldLeft((List.empty[Node], Option.empty[Path])) { case ((tree, prevPathOpt), path) =>
+        (
+          prevPathOpt
+            .map { prevPath =>
+              val (prefix, _, outstandingPath) = commonPrefix(root, prevPath, path)
+              tree ::: leafs(prefix, outstandingPath)
+            }
+            .getOrElse(leafs(root, path)),
+          Some(path)
+        )
       }
       ._1
   }
@@ -69,26 +68,29 @@ trait FileTree {
       (trimRight(lineWithMarks._1) + "\n" + result, lineWithMarks._2)
 
     pathsTree.reverse
-      .foldLeft(("", List.empty[Int])) {
-        case ((result, marks), (offset, label)) =>
-          marks match {
-            case Nil => drawLine(endNode, label, offset :: Nil)
-            case head :: tail =>
-              append(
-                if (offset == head) drawLine(middleNode, label, marks)
-                else if (offset < head) draw2(label, tail match {
-                  case Nil                   => (offset :: Nil, endNode)
-                  case x :: _ if x == offset => (tail, middleNode)
-                  case _                     => (offset :: tail, endNode)
-                })
-                else {
-                  val l1 = drawLine(endNode, label, offset :: marks)
-                  val l2 = drawLine(space, "", offset :: marks)
-                  (l1._1 + "\n" + l2._1, l1._2)
-                },
-                result
-              )
-          }
+      .foldLeft(("", List.empty[Int])) { case ((result, marks), (offset, label)) =>
+        marks match {
+          case Nil => drawLine(endNode, label, offset :: Nil)
+          case head :: tail =>
+            append(
+              if (offset == head) drawLine(middleNode, label, marks)
+              else if (offset < head)
+                draw2(
+                  label,
+                  tail match {
+                    case Nil                   => (offset :: Nil, endNode)
+                    case x :: _ if x == offset => (tail, middleNode)
+                    case _                     => (offset :: tail, endNode)
+                  }
+                )
+              else {
+                val l1 = drawLine(endNode, label, offset :: marks)
+                val l2 = drawLine(space, "", offset :: marks)
+                (l1._1 + "\n" + l2._1, l1._2)
+              },
+              result
+            )
+        }
       }
       ._1
   }
@@ -100,7 +102,8 @@ trait FileTree {
     val pc2 = path2.getNameCount
     if (pc1 - 1 == i || pc2 - 1 == i) {
       if (c != 0) c < 0 else pc1 < pc2
-    } else {
+    }
+    else {
       if (c != 0) c < 0 else comparePaths(path1, path2, i + 1)
     }
   }
@@ -115,7 +118,8 @@ trait FileTree {
           if (path1.getNameCount == 1) path1 else path1.subpath(1, path1.getNameCount),
           if (path2.getNameCount == 1) path2 else path2.subpath(1, path2.getNameCount)
         )
-    } else (prefix, path1, path2)
+    }
+    else (prefix, path1, path2)
 
   def trimRight(string: String): String = string.reverse.dropWhile(_ == ' ').reverse
 }

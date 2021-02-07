@@ -59,12 +59,11 @@ object TemplateUtils {
     val initial: Seq[Part] = Seq(Text(text))
     replacements
       .sortBy { case (f, _) => -f.length }
-      .foldLeft(initial) {
-        case (seq, (from, to)) =>
-          seq.flatMap {
-            case r: Replacement => Seq(r)
-            case t: Text        => t.replace(from, to)
-          }
+      .foldLeft(initial) { case (seq, (from, to)) =>
+        seq.flatMap {
+          case r: Replacement => Seq(r)
+          case t: Text        => t.replace(from, to)
+        }
       }
       .map(_.value)
       .mkString
@@ -89,7 +88,8 @@ object TemplateUtils {
           uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$",
           value                                                     -> s"$$$keyword$$"
         )
-    } else
+    }
+    else
       Seq(
         lowercaseParts.map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
         decapitalize(lowercaseParts.map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
@@ -135,26 +135,28 @@ object TemplateUtils {
       }
       .mkString("\n")
     s"""$keywordsMapping
-       |package=$packageName
-       |packaged=$$package;format="packaged"$$
-       |name=${if (keywords.nonEmpty) s"""$$${keywords.minBy(_.length)}Hyphen$$""" else name}
+      |package=$packageName
+      |packaged=$$package;format="packaged"$$
+      |name=${if (keywords.nonEmpty) s"""$$${keywords.minBy(_.length)}Hyphen$$""" else name}
      """.stripMargin
   }
 
   def parseKeyword(keyword: String): List[String] =
     keyword
-      .foldLeft((List.empty[String], false)) {
-        case ((list, split), ch) =>
-          if (ch == ' ' || ch == '-') (list, true)
-          else
-            (list match {
+      .foldLeft((List.empty[String], false)) { case ((list, split), ch) =>
+        if (ch == ' ' || ch == '-') (list, true)
+        else
+          (
+            list match {
               case Nil => s"$ch" :: Nil
               case head :: tail =>
                 if (split || splitAt(head.head, ch))
                   s"$ch" :: list
                 else
                   s"$ch$head" :: tail
-            }, false)
+            },
+            false
+          )
       }
       ._1
       .map(_.reverse)
