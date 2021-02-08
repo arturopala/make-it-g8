@@ -9,10 +9,10 @@ lazy val root = (project in file("."))
     name := "make-it-g8",
     licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     libraryDependencies ++= Seq(
-      "com.typesafe"         % "config"        % "1.4.0",
-      "com.github.pathikrit" %% "better-files" % "3.8.0",
-      "org.rogach"           %% "scallop"      % "3.5.1",
-      "org.scalatest"        %% "scalatest"    % "3.1.1" % Test
+      "com.typesafe"          % "config"       % "1.4.1",
+      "com.github.pathikrit" %% "better-files" % "3.9.1",
+      "org.rogach"           %% "scallop"      % "4.0.2",
+      "org.scalatest"        %% "scalatest"    % "3.2.3" % Test
     ),
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
     scalafmtOnCompile in Compile := true,

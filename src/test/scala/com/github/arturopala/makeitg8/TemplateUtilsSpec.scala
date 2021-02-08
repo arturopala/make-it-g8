@@ -16,9 +16,10 @@
 
 package com.github.arturopala.makeitg8
 
-import org.scalatest.{Matchers, WordSpec}
+import org.scalatest.wordspec.AnyWordSpec
+import org.scalatest.matchers.should.Matchers
 
-class TemplateUtilsSpec extends WordSpec with Matchers {
+class TemplateUtilsSpec extends AnyWordSpec with Matchers {
 
   "TemplateUtils" should {
     "parse keyword" in {
