@@ -73,15 +73,12 @@ trait MakeItG8Creator {
 
       import scala.collection.JavaConverters.asScalaIterator
 
+      val gitIgnore = GitIgnore(config.ignoredPaths)
+
       val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
         .map { source =>
           val sourcePath: Path = config.sourceFolder.relativize(source)
-          if (
-            !config.ignoredPaths.exists(path =>
-              (path.startsWith("/") && sourcePath.toString.startsWith(path.drop(1))) ||
-                asScalaIterator(sourcePath.iterator).exists(_.toString == path)
-            )
-          ) {
+          if (gitIgnore.isAllowed(sourcePath)) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
             println(s"Processing $sourcePath to $targetPath")

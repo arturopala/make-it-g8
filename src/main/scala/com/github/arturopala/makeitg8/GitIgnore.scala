@@ -44,16 +44,25 @@ final case class GitIgnore(gitPatterns: Seq[String]) {
       path.toFile().isDirectory()
     )
 
+  final def isAllowed(path: Path): Boolean =
+    !isIgnored(path)
+
   final def isIgnored(path: Path, isDirectory: Boolean): Boolean =
     isIgnored(
       asScalaIterator(path.iterator()).map(_.toString).toIterable,
       isDirectory
     )
 
+  final def isAllowed(path: Path, isDirectory: Boolean): Boolean =
+    !isIgnored(path, isDirectory)
+
   final def isIgnored(path: Iterable[String], isDirectory: Boolean): Boolean =
     isIgnored(
       path.toSeq.mkString("/", "/", if (isDirectory) "/" else "")
     )
+
+  final def isAllowed(path: Iterable[String], isDirectory: Boolean): Boolean =
+    !isIgnored(path, isDirectory)
 
   /** Path may end with slash [/] only if it denotes a directory. */
   final def isIgnored(path: String): Boolean =
@@ -62,6 +71,9 @@ final case class GitIgnore(gitPatterns: Seq[String]) {
       case Ignore(_)             => true
       case Abstain | Unignore(_) => false
     }
+
+  final def isAllowed(path: String): Boolean =
+    !isIgnored(path)
 }
 
 object GitIgnore {
@@ -71,7 +83,7 @@ object GitIgnore {
     GitIgnore(parseGitIgnore(gitIgnore))
 
   /** Parse .gitignore file content and return sequence of patterns. */
-  def parseGitIgnore(gitIgnore: String): Seq[String] =
+  def parseGitIgnore(gitIgnore: String): List[String] =
     gitIgnore.lines.collect {
       case line if line.trim.nonEmpty && !line.startsWith("#") =>
         removeTrailingNonEscapedSpaces(line)

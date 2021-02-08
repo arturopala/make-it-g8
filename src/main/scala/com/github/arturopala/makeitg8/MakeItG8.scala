@@ -22,6 +22,7 @@ import better.files._
 import com.typesafe.config.{Config, ConfigFactory}
 
 import scala.util.Try
+import java.nio.charset.StandardCharsets
 
 object MakeItG8 extends App with MakeItG8Creator {
 
@@ -56,7 +57,6 @@ object MakeItG8 extends App with MakeItG8Creator {
 
       val commandLine = new CommandLine(args)
       val config: Config = ConfigFactory.load()
-      val ignoredPaths: List[String] = config.getStringList("source.ignore").asScala.toList
       val sourceFolder = File(commandLine.sourcePath())
       val targetFolder = File(
         commandLine.targetPath
@@ -76,6 +76,20 @@ object MakeItG8 extends App with MakeItG8Creator {
         )
       val scriptTestTarget = config.getString("build.test.folder")
       val scriptTestCommand = config.getString("build.test.command")
+
+      val ignoredPaths: List[String] = {
+        val gitignore: File = sourceFolder / ".gitignore"
+        ".git/" :: "make-it-g8/" ::
+          (if (gitignore.exists) {
+             GitIgnore.parseGitIgnore(gitignore.contentAsString(StandardCharsets.UTF_8))
+           }
+           else {
+             println(
+               s"[WARN] No .gitignore file found, processing all nested files and folders."
+             )
+             Nil
+           })
+      }
 
       MakeItG8Config(
         sourceFolder,
