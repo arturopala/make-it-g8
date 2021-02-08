@@ -22,3 +22,8 @@ projectFilesBackup/
 .classpath
 version.properties
 RUNNING_PID
+node_modules/
+.bloop/
+.metals/
+.vscode/
+.bsp/
