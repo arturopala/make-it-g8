@@ -28,7 +28,13 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ## Usage
 
-### Run the tool locally
+### Run the tool locally in interactive mode
+
+    wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
+    chmod u+x make-it-g8.sh
+    ./make-it-g8.sh --interactive
+
+### Run the tool locally in scripted mode
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
