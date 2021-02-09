@@ -70,13 +70,11 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       val isInteractive = commandLine.interactiveMode.getOrElse(false)
 
-      if (isInteractive) {
-        println()
-        println(
-          s"${ANSI_YELLOW}MakeItG8$ANSI_RESET $ANSI_BLUE - convert your project into giter8 template$ANSI_RESET"
-        )
-        println()
-      }
+      println()
+      println(
+        s"${ANSI_YELLOW}MakeItG8$ANSI_RESET $ANSI_BLUE - convert your project into giter8 template$ANSI_RESET"
+      )
+      println()
 
       val currentDir = File.currentWorkingDirectory.path.toAbsolutePath()
 
@@ -116,8 +114,8 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       if (isInteractive) {
         print(CLEAR_PREVIOUS_LINE)
-        println(s"$CHECK_MARK Selected source folder: $ANSI_YELLOW${sourceFolder.pathAsString}$ANSI_RESET")
       }
+      println(s"$CHECK_MARK Selected source folder: $ANSI_YELLOW${sourceFolder.pathAsString}$ANSI_RESET")
 
       val defaultTarget =
         sourceFolder.path.resolveSibling(sourceFolder.path.getFileName() + ".g8")
@@ -152,9 +150,8 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       if (isInteractive) {
         print(CLEAR_PREVIOUS_LINE)
-        println(s"$CHECK_MARK Selected target folder: $ANSI_YELLOW${targetFolder.pathAsString}$ANSI_RESET")
       }
-      else if (targetFolder.exists && !commandLine.forceOverwrite.getOrElse(false)) {
+      if (targetFolder.exists && !commandLine.forceOverwrite.getOrElse(false)) {
         if (
           !askYesNo(
             s"${ANSI_GREEN}Target folder $ANSI_YELLOW${targetFolder.toString}$ANSI_GREEN exists, are you happy to overwrite it? (y/n): $ANSI_RESET"
@@ -162,6 +159,9 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
         ) {
           throw new Exception("cancelled by the user")
         }
+      }
+      else {
+        println(s"$CHECK_MARK Selected target folder: $ANSI_YELLOW${targetFolder.pathAsString}$ANSI_RESET")
       }
 
       val templateName: String =
@@ -178,8 +178,8 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       if (isInteractive) {
         print(CLEAR_PREVIOUS_LINE)
-        println(s"$CHECK_MARK Selected template name: $ANSI_YELLOW$templateName$ANSI_RESET")
       }
+      println(s"$CHECK_MARK Selected template name: $ANSI_YELLOW$templateName$ANSI_RESET")
 
       val packageName: Option[String] = commandLine.packageName.toOption
         .flatMap(p => if (p.trim.isEmpty) None else Some(p))
@@ -187,20 +187,17 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
           if (isInteractive)
             askOptional(s"${ANSI_GREEN}What is your root package name? [optional] $ANSI_RESET")
           else {
-            println(
-              s"[${ANSI_YELLOW}warn$ANSI_RESET] No --package option, package name will stay not parametrized"
-            )
             None
           }
         )
 
       if (isInteractive) {
         print(CLEAR_PREVIOUS_LINE)
-        if (packageName.isDefined)
-          println(s"$CHECK_MARK Selected root package name: $ANSI_YELLOW${packageName.get}$ANSI_RESET")
-        else
-          println(s"$CHECK_MARK Selected no root package name$ANSI_RESET")
       }
+      if (packageName.isDefined)
+        println(s"$CHECK_MARK Selected root package name: $ANSI_YELLOW${packageName.get}$ANSI_RESET")
+      else
+        println(s"$CHECK_MARK No root package name has been selected$ANSI_RESET")
 
       @tailrec
       def askNextKeyword(map: Map[String, String]): Map[String, String] = {
@@ -260,8 +257,8 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       if (isInteractive) {
         print(CLEAR_PREVIOUS_LINE)
-        println(s"$CHECK_MARK Selected build & test command: $ANSI_YELLOW$scriptTestCommand$ANSI_RESET")
       }
+      println(s"$CHECK_MARK Selected build & test command: $ANSI_YELLOW$scriptTestCommand$ANSI_RESET")
 
       val ignoredPaths: List[String] = {
         val gitignore: File = sourceFolder / ".gitignore"
@@ -277,7 +274,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
            })
       }
 
-      if (isInteractive && ignoredPaths.size > 1) {
+      if (ignoredPaths.size > 1) {
         println(
           s"$CHECK_MARK Ignore files and folders matching the following patterns:$ANSI_RESET"
         )
