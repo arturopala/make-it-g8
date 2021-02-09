@@ -29,19 +29,29 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ## Usage
 
-### Run the tool locally in interactive mode
+### Run the tool locally in an interactive mode
 
-   cs launch com.github.arturopala:make-it-g8_2.12:1.10.0 -- --interactive
+Using coursier:
 
-   or
+    cs launch com.github.arturopala::make-it-g8:latest.stable -- --interactive
+
+or using script:
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
     ./make-it-g8.sh --interactive
 
-### Run the tool locally in scripted mode
+### Run the tool locally in a scripted mode
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.10.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+Using coursier:
+
+    cs launch com.github.arturopala::make-it-g8:latest.stable -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+
+or using script:
+
+    wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
+    chmod u+x make-it-g8.sh
+    ./make-it-g8.sh --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
     Options:
 
@@ -71,7 +81,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.10.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.11.0"      
       
 ## Example template created with make-it-g8
 
