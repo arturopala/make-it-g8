@@ -33,38 +33,39 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
     ./make-it-g8.sh --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
-    
+
     Options:
-    
-      -s, --source  <arg>                        Source code path
-      -p, --package  <arg>                       Source code base package name
-    
-      -t, --target  <arg>                        Template target path
-      -n, --name  <arg>                          Template name
-      -K placeholder=text [placeholder=text]...  Text chunks to parametrize
-      
-      -c, --clear                                Clear target folder
-          --noclear                              Do not clear whole target folder,
-                                                 only src/main/g8 subfolder
-      -d, --description  <arg>                   Single-line template description, use + as a space
-      -x, --custom-readme-header-path <path>     Custom README.md header path
-      
-      -r, --readme                               Create readme
-          --noreadme                             Do not create/update readme
-          
-      -h, --help                                 Show help message
-      -v, --version                              Show version of this program
+
+    -s, --source  <arg>                        Source code path, absolute or
+                                                relative
+    -p, --package  <arg>                       Source code base package name
+
+    -c, --clear                                Clear target folder
+        --noclear                              Do not clear whole target folder,
+                                                only src/main/g8 subfolder
+    -x, --custom-readme-header-path  <path>    Custom README.md header path
+    -d, --description  <arg>                   Template description
+    -f, --force                                Force overwriting target folder
+        --noforce
+    -i, --interactive                          Interactive mode
+        --nointeractive
+    -Kplaceholder=text [placeholder=text]...   Text chunks to parametrize
+    -n, --name  <arg>                          Template name
+    -r, --readme                               Create readme
+        --noreadme                             Do not create/update readme
+    -t, --target  <arg>                        Template target path, absolute or
+                                                relative
+    -h, --help                                 Show help message
+    -v, --version                              Show version of this program
     
 ### Use as a library
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.9.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.10.0"      
       
-## Example templates created with make-it-g8
+## Example template created with make-it-g8
 
-* https://github.com/hmrc/template-play-26-frontend.g8
-* https://github.com/hmrc/template-play-26-frontend-fsm.g8
-* https://github.com/hmrc/template-play-26-microservice.g8
+* https://github.com/hmrc/template-play-27-frontend-fsm.g8
     
 
