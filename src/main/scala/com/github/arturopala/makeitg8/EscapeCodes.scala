@@ -16,22 +16,18 @@
 
 package com.github.arturopala.makeitg8
 
-import better.files.File
+trait EscapeCodes {
+  // colors
+  val ANSI_RESET = "\u001B[0m"
+  val ANSI_BLACK = "\u001B[30m"
+  val ANSI_RED = "\u001B[31m"
+  val ANSI_GREEN = "\u001B[32m"
+  val ANSI_YELLOW = "\u001B[33m"
+  val ANSI_BLUE = "\u001B[34m"
+  val ANSI_PURPLE = "\u001B[35m"
+  val ANSI_CYAN = "\u001B[36m"
+  val ANSI_WHITE = "\u001B[37m"
 
-case class MakeItG8Config(
-  sourceFolder: File,
-  targetFolder: File,
-  ignoredPaths: List[String],
-  templateName: String,
-  packageName: Option[String],
-  keywordValueMap: Map[String, String],
-  g8BuildTemplateSource: String,
-  g8BuildTemplateResources: List[String],
-  scriptTestTarget: String,
-  scriptTestCommand: String,
-  scriptBeforeTest: List[String],
-  clearTargetFolder: Boolean,
-  createReadme: Boolean,
-  templateDescription: String,
-  customReadmeHeaderPath: Option[String]
-)
+  val CLEAR_PREVIOUS_LINE = "\u001b[1F\u001b[2K"
+  val CHECK_MARK = s"$ANSI_GREEN\u2713$ANSI_RESET"
+}

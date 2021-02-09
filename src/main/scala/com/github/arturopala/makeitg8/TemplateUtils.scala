@@ -26,13 +26,12 @@ object TemplateUtils {
   // UTILITY AND HELPER FUNCTIONS
   //---------------------------------------
 
-  def templatePathFor(path: Path, replacements: Seq[(String, String)]): Path =
+  final def templatePathFor(path: Path, replacements: Seq[(String, String)]): Path =
     Paths.get(
-      replacements
-        .foldLeft(path.toString) { case (a, (f, t)) => a.replaceAllLiterally(f, t) }
+      replace(path.toString, replacements)
     )
 
-  def escape(text: String): String =
+  final def escape(text: String): String =
     text
       .replaceAllLiterally("\\", "\\\\")
       .replaceAllLiterally("$", "\\$")
@@ -41,7 +40,7 @@ object TemplateUtils {
     val value: String
   }
 
-  case class Text(value: String) extends Part {
+  final case class Text(value: String) extends Part {
     def replace(from: String, to: String): Seq[Part] = {
       val i0 = value.indexOf(from)
       if (i0 < 0) Seq(this)
@@ -53,9 +52,9 @@ object TemplateUtils {
     }
   }
 
-  case class Replacement(value: String) extends Part
+  final case class Replacement(value: String) extends Part
 
-  def replace(text: String, replacements: Seq[(String, String)]): String = {
+  final def replace(text: String, replacements: Seq[(String, String)]): String = {
     val initial: Seq[Part] = Seq(Text(text))
     replacements
       .sortBy { case (f, _) => -f.length }
@@ -69,10 +68,13 @@ object TemplateUtils {
       .mkString
   }
 
-  def prepareKeywordsReplacements(keywords: Seq[String], keywordValueMap: Map[String, String]): Seq[(String, String)] =
+  final def prepareKeywordsReplacements(
+    keywords: Seq[String],
+    keywordValueMap: Map[String, String]
+  ): Seq[(String, String)] =
     keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap.getOrElse(k, k)))
 
-  def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
+  final def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
     val parts = parseKeyword(value)
     val lowercaseParts = parts.map(lowercase)
     val uppercaseParts = parts.map(uppercase)
@@ -108,9 +110,9 @@ object TemplateUtils {
       )
   }
 
-  def prepareDefaultProperties(
+  final def prepareDefaultProperties(
     name: String,
-    packageName: String,
+    packageName: Option[String],
     keywords: Seq[String],
     keywordValueMap: Map[String, String]
   ): String = {
@@ -135,13 +137,15 @@ object TemplateUtils {
       }
       .mkString("\n")
     s"""$keywordsMapping
-      |package=$packageName
-      |packaged=$$package;format="packaged"$$
+    ${if (packageName.isDefined)
+      s"""|package=${packageName.get}
+      |packaged=$$package;format="packaged"$$"""
+    else ""}
       |name=${if (keywords.nonEmpty) s"""$$${keywords.minBy(_.length)}Hyphen$$""" else name}
      """.stripMargin
   }
 
-  def parseKeyword(keyword: String): List[String] =
+  final def parseKeyword(keyword: String): List[String] =
     keyword
       .foldLeft((List.empty[String], false)) { case ((list, split), ch) =>
         if (ch == ' ' || ch == '-') (list, true)
@@ -163,16 +167,16 @@ object TemplateUtils {
       .reverse
 
   import Character._
-  def splitAt(prev: Char, ch: Char): Boolean =
+  final def splitAt(prev: Char, ch: Char): Boolean =
     (isUpperCase(ch) && (!isUpperCase(prev) || isDigit(prev))) ||
       (isDigit(ch) && (!isDigit(prev) || isUpperCase(prev)))
 
-  def uppercase(keyword: String): String = keyword.toUpperCase
-  def lowercase(keyword: String): String = keyword.toLowerCase
+  final def uppercase(keyword: String): String = keyword.toUpperCase
+  final def lowercase(keyword: String): String = keyword.toLowerCase
 
-  def capitalize(keyword: String): String =
+  final def capitalize(keyword: String): String =
     keyword.take(1).toUpperCase + keyword.drop(1)
 
-  def decapitalize(keyword: String): String =
+  final def decapitalize(keyword: String): String =
     keyword.take(1).toLowerCase + keyword.drop(1)
 }

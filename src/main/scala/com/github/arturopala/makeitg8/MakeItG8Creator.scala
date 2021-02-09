@@ -20,27 +20,34 @@ import java.net.URLEncoder
 import java.nio.file.Path
 
 import better.files.{File, Resource}
+import java.nio.file.attribute.PosixFilePermission
 
 import scala.util.Try
 
-trait MakeItG8Creator {
+trait MakeItG8Creator extends EscapeCodes {
 
   def createG8Template(config: MakeItG8Config): Either[Throwable, Unit] =
     Try {
 
-      println(s"Processing ${config.sourceFolder} into giter8 template ${config.targetFolder} ...")
+      println()
+      println(
+        s"Processing $ANSI_YELLOW${config.sourceFolder}$ANSI_RESET to giter8 template $ANSI_CYAN${config.targetFolder}$ANSI_RESET ..."
+      )
       if (config.targetFolder.exists && config.clearTargetFolder) {
-        println(s"Target folder exists, clearing ${config.targetFolder.path} to make space for a new template project")
+        println(
+          s"[${ANSI_YELLOW}warn$ANSI_RESET] Target folder exists, clearing $ANSI_YELLOW${config.targetFolder}$ANSI_RESET to make space for the new template"
+        )
         config.targetFolder.clear()
       }
       else {
         config.targetFolder.createDirectoryIfNotExists()
-
       }
 
       val targetG8Folder = (config.targetFolder / "src" / "main" / "g8").createDirectoryIfNotExists()
       if (!config.clearTargetFolder) {
-        println(s"Clearing ${targetG8Folder.path} to make space for a new template")
+        println(
+          s"[${ANSI_YELLOW}warn$ANSI_RESET] Clearing $ANSI_YELLOW${targetG8Folder.path}$ANSI_RESET to make space for the new template"
+        )
         targetG8Folder.clear()
       }
 
@@ -49,18 +56,24 @@ trait MakeItG8Creator {
       //---------------------------------------
 
       val keywords: Seq[String] = config.keywordValueMap.toSeq.sortBy(p => -p._2.length).map(_._1)
-      val contentFilesReplacements: Seq[(String, String)] = Seq(
-        config.packageName.replaceAllLiterally(".", "/") -> "$packaged$",
-        config.packageName                               -> "$package$"
-      ) ++ TemplateUtils.prepareKeywordsReplacements(keywords, config.keywordValueMap)
+
+      val contentFilesReplacements: Seq[(String, String)] =
+        config.packageName
+          .map(packageName =>
+            Seq(
+              packageName.replaceAllLiterally(".", "/") -> "$packaged$",
+              packageName                               -> "$package$"
+            )
+          )
+          .getOrElse(Seq.empty) ++ TemplateUtils.prepareKeywordsReplacements(keywords, config.keywordValueMap)
 
       println()
 
       if (contentFilesReplacements.nonEmpty) {
-        println("Content file replacements:")
+        println("Source file content replacements:")
         println(
           contentFilesReplacements
-            .map(r => s"${r._1} -> ${r._2}")
+            .map(r => s"\t$ANSI_PURPLE${r._1}$ANSI_RESET \u2192 $ANSI_CYAN${r._2}$ANSI_RESET")
             .mkString("\n")
         )
       }
@@ -81,7 +94,10 @@ trait MakeItG8Creator {
           if (gitIgnore.isAllowed(sourcePath)) {
             val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
             val target = File(targetG8Folder.path.resolve(targetPath))
-            println(s"Processing $sourcePath to $targetPath")
+            if (sourcePath == targetPath)
+              println(s"Processing $ANSI_YELLOW$sourcePath$ANSI_RESET")
+            else
+              println(s"Processing $ANSI_YELLOW$sourcePath$ANSI_RESET as $ANSI_CYAN$targetPath$ANSI_RESET")
             if (source.isDirectory) {
               config.targetFolder.createDirectoryIfNotExists()
               None
@@ -134,7 +150,9 @@ trait MakeItG8Creator {
           "$gitRepositoryName$"   -> config.templateName,
           "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
           "$exampleTargetTree$"   -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
-          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ Seq("package" -> config.packageName))
+          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ config.packageName
+            .map(p => Seq("package" -> p))
+            .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
             .mkString(" ")} -o $testTemplateName""",
           "$testTargetFolder$" -> config.scriptTestTarget,
@@ -142,22 +160,24 @@ trait MakeItG8Creator {
           "$testCommand$"      -> config.scriptTestCommand,
           "$beforeTest$"       -> config.scriptBeforeTest.mkString("\n\t"),
           "$makeItG8CommandLine$" ->
-            s"""sbt "run --noclear --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} --package ${config.packageName} --description ${URLEncoder
+            (s"""sbt "run --noclear --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} """ ++ config.packageName
+              .map(p => s""" --package $p """)
+              .getOrElse("") ++ s"""--description ${URLEncoder
               .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
               .map { case (k, v) =>
                 s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
-              .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """,
+              .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse("")
         )
       }
 
       println()
-      println("Build file replacements:")
+      println("Build file content replacements:")
 
       println(
         buildFilesReplacements
-          .map(r => s"${r._1} -> ${r._2}")
+          .map(r => s"\t$ANSI_PURPLE${r._1}$ANSI_RESET \u2192 $ANSI_CYAN${r._2}$ANSI_RESET")
           .mkString("\n")
       )
 
@@ -167,12 +187,15 @@ trait MakeItG8Creator {
         if (config.createReadme || path != "README.md") {
           Try(Resource.my.getAsString(s"/${config.g8BuildTemplateSource}/$path"))
             .map { content =>
-              println(s"Adding build file $path")
               val targetFile = File(
                 config.targetFolder.path
                   .resolve(path.replace("__", "."))
               )
+              println(s"Creating build file $ANSI_YELLOW${path.replace("__", ".")}$ANSI_RESET")
               targetFile.createFileIfNotExists(createParents = true)
+              if (targetFile.name.endsWith(".sh")) {
+                targetFile.addPermission(PosixFilePermission.OWNER_EXECUTE)
+              }
               targetFile
                 .clear()
                 .write(
@@ -180,11 +203,11 @@ trait MakeItG8Creator {
                     .replace(content, buildFilesReplacements)
                 )
             } orElse Try {
-            println(s"Failed to add build file $path")
+            println(s"[${ANSI_RED}error$ANSI_RESET] Failed to create build file $ANSI_YELLOW$path$ANSI_RESET")
           }
         }
         else {
-          println(s"Skipping $path")
+          println(s"Skipping $ANSI_YELLOW$path$ANSI_RESET")
         }
       }
     }.toEither

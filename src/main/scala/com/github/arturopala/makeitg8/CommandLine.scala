@@ -23,17 +23,26 @@ import org.rogach.scallop.exceptions.{RequiredOptionNotFound, UnknownOption}
 
 import scala.util.control.NonFatal
 
-class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
+class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) with EscapeCodes {
 
-  val sourcePath = opt[Path](name = "source", short = 's', required = true, descr = "Source code path")
+  val sourcePath =
+    opt[Path](name = "source", short = 's', descr = "Source code path, absolute or relative")
+
   val packageName =
-    opt[String](name = "package", short = 'p', descr = "Source code base package name", required = true)
+    opt[String](name = "package", short = 'p', descr = "Source code base package name")
 
-  val targetPath = opt[Path](name = "target", short = 't', descr = "Template target path")
-  val templateName = opt[String](name = "name", short = 'n', descr = "Template name")
+  val targetPath =
+    opt[Path](name = "target", short = 't', descr = "Template target path, absolute or relative")
+
+  val templateName =
+    opt[String](name = "name", short = 'n', descr = "Template name")
+
   val keywords =
     props[String](name = 'K', keyName = "placeholder", valueName = "text", descr = "Text chunks to parametrize")
-  val templateDescription = opt[String](name = "description", short = 'd', descr = "Template description")
+
+  val templateDescription =
+    opt[String](name = "description", short = 'd', descr = "Template description")
+
   val customReadmeHeaderPath =
     opt[String](
       name = "custom-readme-header-path",
@@ -42,39 +51,62 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
       argName = "path"
     )
 
-  val clearBuildFiles = toggle(
-    name = "clear",
-    short = 'c',
-    descrYes = "Clear target folder",
-    descrNo = "Do not clear whole target folder, only src/main/g8 subfolder",
-    default = Some(true)
-  )
-  val createReadme = toggle(
-    name = "readme",
-    short = 'r',
-    descrYes = "Create readme",
-    descrNo = "Do not create/update readme",
-    default = Some(true)
-  )
+  val clearBuildFiles =
+    toggle(
+      name = "clear",
+      short = 'c',
+      descrYes = "Clear target folder",
+      descrNo = "Do not clear whole target folder, only src/main/g8 subfolder",
+      default = Some(true)
+    )
+  val createReadme =
+    toggle(
+      name = "readme",
+      short = 'r',
+      descrYes = "Create readme",
+      descrNo = "Do not create/update readme",
+      default = Some(true)
+    )
 
-  version("MakeItG8 - convert your project into a giter8 template")
+  val interactiveMode =
+    toggle(
+      name = "interactive",
+      short = 'i',
+      noshort = false,
+      descrYes = "Interactive mode",
+      default = Some(false)
+    )
+
+  val forceOverwrite =
+    toggle(
+      name = "force",
+      short = 'f',
+      noshort = false,
+      descrYes = "Force overwriting target folder",
+      default = Some(false)
+    )
+
+  version(s"\r\n${ANSI_YELLOW}MakeItG8$ANSI_RESET $ANSI_BLUE - convert your project into giter8 template$ANSI_RESET")
+
   banner(
-    """Usage: sbt "run --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [--custom-readme-header-path {PATH}] [-K placeholder=textURLEncoded]"
+    s"""
+      |${ANSI_BLUE}Usage:$ANSI_RESET sbt "run [--source {PATH}] [--target {PATH}] [--force] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [--custom-readme-header-path {PATH}] [-K placeholder=textURLEncoded]"
       |
-      |Options:
+      |${ANSI_BLUE}Interactive mode:$ANSI_RESET sbt "run --interactive ..."
+      |
+      |${ANSI_BLUE}Options:$ANSI_RESET
       |""".stripMargin
   )
 
   mainOptions = Seq(sourcePath, packageName)
 
   override def onError(e: Throwable): Unit = e match {
-    case _: RequiredOptionNotFound => printHelp()
-    case _: UnknownOption          => printHelp()
-    case NonFatal(ex)              => super.onError(ex)
+    case NonFatal(ex) =>
+      printHelp()
+      throw new CommandLineException()
   }
-
-  validatePathIsDirectory(sourcePath)
-  validatePathExists(sourcePath)
 
   verify()
 }
+
+class CommandLineException extends Exception
