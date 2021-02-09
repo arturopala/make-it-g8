@@ -87,7 +87,7 @@ class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) with Es
       default = Some(false)
     )
 
-  version(s"\r\n${ANSI_YELLOW}MakeItG8$ANSI_RESET $ANSI_BLUE - convert your project into giter8 template$ANSI_RESET")
+  version(s"\r\n${ANSI_YELLOW}MakeItG8$ANSI_RESET $ANSI_BLUE - convert your project into a giter8 template$ANSI_RESET")
 
   banner(
     s"""
