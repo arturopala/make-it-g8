@@ -1,7 +1,7 @@
 Tool to convert your project into a giter8 template
 ===
 
-![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
+![Build](https://github.com/arturopala/make-it-g8/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
 
 ## Motivation
 Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
