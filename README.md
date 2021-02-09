@@ -76,5 +76,19 @@ make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/
 ## Example template created with make-it-g8
 
 * https://github.com/hmrc/template-play-27-frontend-fsm.g8
+
+## Development
+
+Test
+
+    sbt test
+
+Run locally
+
+    sbt run
+
+    sbt "run --interactive"
+
+    sbt run -Dmakeitg8.interactive=true 
     
 
