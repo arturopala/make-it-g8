@@ -88,7 +88,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       def askSourceFolder: Path =
         ask[Path](
-          s"""${ANSI_GREEN}Select source project [$ANSI_PURPLE$currentDir$ANSI_GREEN]: $ANSI_RESET""",
+          s"""${ANSI_GREEN}Select source project path, absolute or relative [$ANSI_PURPLE$currentDir$ANSI_GREEN]: $ANSI_RESET""",
           s =>
             if (s.isEmpty) None
             else {
@@ -126,7 +126,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
         commandLine.targetPath.map(currentDir.resolve).getOrElse {
           if (isInteractive)
             ask[Path](
-              s"""${ANSI_GREEN}Where to create the template? [$ANSI_PURPLE$defaultTarget$ANSI_GREEN]: $ANSI_RESET""",
+              s"""${ANSI_GREEN}Select target template path, absolute or relative [$ANSI_PURPLE$defaultTarget$ANSI_GREEN]: $ANSI_RESET""",
               s =>
                 if (s.isEmpty) None
                 else {
@@ -135,7 +135,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
                   if (path.toFile().exists && !commandLine.forceOverwrite.getOrElse(false))
                     if (
                       askYesNo(
-                        s"${ANSI_GREEN}Target folder $ANSI_YELLOW${path.toString}$ANSI_GREEN exists, are you happy to overwrite it? [y/n]: $ANSI_RESET"
+                        s"${ANSI_GREEN}Target folder $ANSI_YELLOW${path.toString}$ANSI_GREEN exists, are you happy to overwrite it? (y/n): $ANSI_RESET"
                       )
                     )
                       Some(path)
@@ -157,7 +157,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
       else if (targetFolder.exists && !commandLine.forceOverwrite.getOrElse(false)) {
         if (
           !askYesNo(
-            s"${ANSI_GREEN}Target folder $ANSI_YELLOW${targetFolder.toString}$ANSI_GREEN exists, are you happy to overwrite it? [y/n]: $ANSI_RESET"
+            s"${ANSI_GREEN}Target folder $ANSI_YELLOW${targetFolder.toString}$ANSI_GREEN exists, are you happy to overwrite it? (y/n): $ANSI_RESET"
           )
         ) {
           throw new Exception("cancelled by the user")
@@ -287,7 +287,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
 
       val proceed =
         if (isInteractive)
-          askYesNo("Proceed [y/n]:")
+          askYesNo("Proceed (y/n):")
         else true
 
       if (proceed)
