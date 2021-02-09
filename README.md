@@ -25,10 +25,15 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 * Java >= 8
 * SBT >= 1.3.x <https://www.scala-sbt.org/release/docs/Setup.html>
 * giter8 (g8) >= 0.11.0 <http://www.foundweekends.org/giter8/setup.html>
+* coursier launcher <https://get-coursier.io/docs/cli-installation>
 
 ## Usage
 
 ### Run the tool locally in interactive mode
+
+   cs launch com.github.arturopala:make-it-g8_2.12:1.10.0 -- --interactive
+
+   or
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
@@ -36,9 +41,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ### Run the tool locally in scripted mode
 
-    wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
-    chmod u+x make-it-g8.sh
-    ./make-it-g8.sh --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.10.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
     Options:
 
