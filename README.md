@@ -33,7 +33,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 Using coursier:
 
-    cs launch com.github.arturopala::make-it-g8:latest.stable -- --interactive
+    cs launch com.github.arturopala:make-it-g8_2.12:1.11.0 -- --interactive
 
 or using script:
 
@@ -45,7 +45,7 @@ or using script:
 
 Using coursier:
 
-    cs launch com.github.arturopala::make-it-g8:latest.stable -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.11.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
 or using script:
 
