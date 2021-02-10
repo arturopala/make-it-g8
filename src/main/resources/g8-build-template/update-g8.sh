@@ -8,6 +8,12 @@ if [[ -d ./src/main/g8 ]]; then
      exit -1
    fi
 
+   if ! command -v sbt &> /dev/null
+   then
+     echo "[ERROR] sbt command cannot be found, please install sbt first"
+     exit -1
+   fi
+
    mkdir -p target
    cd target
    if [[ -d .makeitg8 ]] && [[ -d .makeitg8/.git ]] ; then
