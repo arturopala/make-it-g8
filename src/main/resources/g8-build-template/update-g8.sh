@@ -2,6 +2,12 @@
 
 if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
 
+   if ! command -v git &> /dev/null
+   then
+     echo "[ERROR] git command cannot be found, please install git first"
+     exit -1
+   fi
+
    mkdir -p target
    cd target
    if [[ -d .makeitg8 ]] && [[ -d .makeitg8/.git ]] ; then
@@ -14,10 +20,13 @@ if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
    fi
 
    $makeItG8CommandLine$
+   
+   echo "Done."
+   exit 0
 
 else
 
-    echo "WARNING: run the script ./update-g8.sh in the template root folder"
+    echo "[ERROR] run the script ./update-g8.sh in the template root folder"
     exit -1
 
 fi
