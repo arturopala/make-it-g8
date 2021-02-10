@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
+if [[ -d ./src/main/g8 ]]; then
 
     if ! command -v g8 &> /dev/null
     then

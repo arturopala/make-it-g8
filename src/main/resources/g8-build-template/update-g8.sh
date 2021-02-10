@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
+if [[ -d ./src/main/g8 ]]; then
 
    if ! command -v git &> /dev/null
    then
@@ -20,7 +20,7 @@ if [[ -f ./build.sbt ]] && [[ -d ./src/main/g8 ]]; then
    fi
 
    $makeItG8CommandLine$
-   
+
    echo "Done."
    exit 0
 
