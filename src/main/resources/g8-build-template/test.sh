@@ -12,13 +12,13 @@ if [[ -d ./src/main/g8 ]]; then
     echo "Processing ${TEMPLATE} ..."
     mkdir -p $testTargetFolder$
     cd $testTargetFolder$
-    sudo rm -r $testTemplateName$
+    find . -not -name .git -delete
     g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ "$@"
     cd $testTemplateName$
     $beforeTest$
     $testCommand$
 
-    echo "Done, created project $testTargetFolder$/$testTemplateName$"
+    echo "Done, created project in $testTargetFolder$/$testTemplateName$"
     exit 0
 
 else

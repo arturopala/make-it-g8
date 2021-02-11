@@ -27,12 +27,12 @@ if [[ -d ./src/main/g8 ]]; then
 
    $makeItG8CommandLine$
 
-   echo "Done, updated template from $testTargetFolder$/$testTemplateName$"
+   echo "Done, updated the template based on $testTargetFolder$/$testTemplateName$"
    exit 0
 
 else
 
-    echo "[ERROR] run the script ./update-g8.sh in the template root folder"
+    echo "[ERROR] run the script ./update-g8.sh in the template's root folder"
     exit -1
 
 fi
