@@ -216,7 +216,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
                 Some(defaultKey)
               )
             print(CLEAR_PREVIOUS_LINE)
-            println(s"""\t$ANSI_CYAN$$$key$$$ANSI_GREEN \u2192 $ANSI_PURPLE${word.get}$ANSI_RESET"""")
+            println(s"""\t$ANSI_CYAN$$$key$$$ANSI_GREEN \u2192 $ANSI_PURPLE${word.get}$ANSI_RESET""")
             askNextKeyword(map.updated(key, URLEncoder.encode(word.get, "utf-8")))
           }
         }
