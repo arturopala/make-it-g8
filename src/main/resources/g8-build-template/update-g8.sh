@@ -27,7 +27,7 @@ if [[ -d ./src/main/g8 ]]; then
 
    $makeItG8CommandLine$
 
-   echo "Done."
+   echo "Done, updated template from $testTargetFolder$/$testTemplateName$"
    exit 0
 
 else

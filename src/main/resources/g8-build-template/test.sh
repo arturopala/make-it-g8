@@ -18,7 +18,7 @@ if [[ -d ./src/main/g8 ]]; then
     $beforeTest$
     $testCommand$
 
-    echo "Done."
+    echo "Done, created project $testTargetFolder$/$testTemplateName$"
     exit 0
 
 else
