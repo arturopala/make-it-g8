@@ -22,7 +22,7 @@ import java.nio.file.Path
 import better.files.{File, Resource}
 import java.nio.file.attribute.PosixFilePermission
 
-import scala.util.Try
+import scala.util.{Failure, Try}
 
 trait MakeItG8Creator extends EscapeCodes {
 
@@ -80,9 +80,9 @@ trait MakeItG8Creator extends EscapeCodes {
 
       println()
 
-      //---------------------------------------
-      // COPY PARAMETRISED PROJECT FILES TO G8
-      //---------------------------------------
+      //---------------------------------------------
+      // COPY PARAMETRISED PROJECT FILES TO G8 FOLDER
+      //---------------------------------------------
 
       import scala.collection.JavaConverters.asScalaIterator
 
@@ -202,8 +202,8 @@ trait MakeItG8Creator extends EscapeCodes {
                   TemplateUtils
                     .replace(content, buildFilesReplacements)
                 )
-            } orElse Try {
-            println(s"[${ANSI_RED}error$ANSI_RESET] Failed to create build file $ANSI_YELLOW$path$ANSI_RESET")
+            } orElse {
+            Failure(new Exception(s"Failed to create build file $path"))
           }
         }
         else {
