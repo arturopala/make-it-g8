@@ -33,7 +33,7 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 Using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.12.0 -- --interactive
+    cs launch com.github.arturopala:make-it-g8_2.12:1.13.0 -- --interactive
 
 or using script:
 
@@ -45,7 +45,7 @@ or using script:
 
 Using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.12.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.13.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
 or using script:
 
@@ -81,7 +81,7 @@ or using script:
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.12.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.13.0"      
       
 ## Example template created with make-it-g8
 
