@@ -4,21 +4,21 @@ Tool to convert your project into a giter8 template
 ![Build](https://github.com/arturopala/make-it-g8/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
 
 ## Motivation
-Creating new giter8 template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome and error-prone. 
+Creating new [giter8](http://www.foundweekends.org/giter8) template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome, error-prone and tedious to test. 
 You may also want to automate template creation after changes made to the project without manually replacing package paths, file names and text chunks with the placeholders.
 
 ## What does it mean to create g8 template?
 The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
-Place it on GitHub and use with the `g8` command line tool or `sbt new` command to spring your own project.
+Place it on GitHub and call with the `g8` command line tool or `sbt new` command to spring your own project.
 
 ## Advantages of using make-it-g8
 
-* creates template wrapped nicely in an SBT project
-* supports parametrization by multiple replacement keys
+* quick template creation
+* easy parametrization with multiple replacement keys
 * derives automatically common key variants: camel, snake, hyphen, package, packaged, etc.
 * adds a script to generate an example project and test it
 * adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
-* generates README with the template usage guide and an example project files tree picture
+* generates README.md with the template usage guide and an example project filetree diagram
 
 ## Prerequisites
 
@@ -29,13 +29,21 @@ Place it on GitHub and use with the `g8` command line tool or `sbt new` command 
 
 ## Usage
 
+### Consider installing the tool with coursier
+
+    cs install --contrib make-it-g8
+
 ### Run the tool locally in an interactive mode
 
-Using coursier:
+Run after installation using:
+
+    make-it-g8
+
+or launch using coursier:
 
     cs launch com.github.arturopala:make-it-g8_2.12:1.14.0 -- --interactive
 
-or using script:
+or run using local clone of the repository:
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
@@ -43,11 +51,15 @@ or using script:
 
 ### Run the tool locally in a scripted mode
 
-Using coursier:
+Run after installation using:
+
+    make-it-g8 -- --no-interactive --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+
+or launch using coursier:
 
     cs launch com.github.arturopala:make-it-g8_2.12:1.14.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
-or using script:
+or run using local clone of the repository:
 
     wget https://raw.githubusercontent.com/arturopala/make-it-g8/master/make-it-g8.sh
     chmod u+x make-it-g8.sh
