@@ -121,7 +121,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
         sourceFolder.path.resolveSibling(sourceFolder.path.getFileName() + ".g8")
 
       val targetFolder = File(
-        commandLine.targetPath.map(currentDir.resolveSibling).getOrElse {
+        commandLine.targetPath.map(currentDir.resolve).getOrElse {
           if (isInteractive)
             ask[Path](
               s"""${ANSI_GREEN}Select target template path, absolute or relative [$ANSI_PURPLE$defaultTarget$ANSI_GREEN]: $ANSI_RESET""",
@@ -129,7 +129,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
                 if (s.isEmpty) None
                 else {
                   val s1 = if (s.endsWith(".g8")) s else s"$s.g8"
-                  val path = sourceFolder.path.resolveSibling(s1)
+                  val path = currentDir.resolve(s1)
                   if (path.toFile().exists && !commandLine.forceOverwrite.getOrElse(false))
                     if (
                       askYesNo(
