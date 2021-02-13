@@ -43,7 +43,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.17.0 -- --interactive
+    cs launch com.github.arturopala:make-it-g8_2.12:1.18.0 -- --interactive
 
 or run using local clone of the repository:
 
@@ -59,7 +59,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.17.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.18.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
 or run using local clone of the repository:
 
@@ -95,7 +95,7 @@ or run using local clone of the repository:
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.17.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.18.0"      
       
 ## Example template created with make-it-g8
 
