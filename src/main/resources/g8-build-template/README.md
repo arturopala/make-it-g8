@@ -8,9 +8,15 @@ $customReadmeHeader$
 How to create a new project based on the template?
 ---
 
-* Install g8 commandline tool (http://www.foundweekends.org/giter8/setup.html)
-* Go to the directory where you want to create the template
+* Go to directory where you want to create the template
 * Decide your project name (the hardest part :))
+* Run the command
+
+    `sbt new {GITHUB_USER}/$templateName$`
+
+or    
+
+* Install g8 commandline tool (http://www.foundweekends.org/giter8/setup.html)
 * Run the command
 
     `g8 {GITHUB_USER}/$templateName$ $g8CommandLineArgs$`

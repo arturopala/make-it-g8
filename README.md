@@ -99,6 +99,7 @@ make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/
       
 ## Example template created with make-it-g8
 
+* https://github.com/arturopala/cross-scala.g8
 * https://github.com/hmrc/template-play-27-frontend-fsm.g8
 
 ## Development
