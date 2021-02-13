@@ -9,17 +9,25 @@ if [[ -d ./src/main/g8 ]]; then
     fi
 
     export TEMPLATE=`pwd | xargs basename`
-    echo "Processing ${TEMPLATE} ..."
+
+    echo "Creating new project $testTargetFolder$/$testTemplateName$ from the ${TEMPLATE} template ..."
+    
     mkdir -p $testTargetFolder$
     cd $testTargetFolder$
     find . -not -name .git -delete
-    g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ "$@"
-    cd $testTemplateName$
-    $beforeTest$
-    $testCommand$
 
-    echo "Done, created project in $testTargetFolder$/$testTemplateName$"
-    exit 0
+    g8 file://../../../${TEMPLATE} $g8CommandLineArgs$ "$@"
+
+    if [[ -d ./$testTemplateName$ ]]; then
+        cd $testTemplateName$
+        $beforeTest$
+        $testCommand$
+        echo "Done, created new project in $testTargetFolder$/$testTemplateName$"
+        exit 0
+    else
+        echo "[ERROR] something went wrong, project has not been created in $testTargetFolder$/$testTemplateName$"
+        exit -1
+    fi
 
 else
 
