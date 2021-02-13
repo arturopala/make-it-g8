@@ -70,76 +70,88 @@ trait MakeItG8Creator extends EscapeCodes {
       println()
 
       if (contentFilesReplacements.nonEmpty) {
-        println("Source file content replacements:")
+        println("Proposed content replacements:")
         println(
           contentFilesReplacements
-            .map(r => s"\t$ANSI_PURPLE${r._1}$ANSI_RESET \u2192 $ANSI_CYAN${r._2}$ANSI_RESET")
+            .map { case (from, to) => s"\t$ANSI_PURPLE$to$ANSI_RESET \u2192 $ANSI_CYAN$from$ANSI_RESET" }
             .mkString("\n")
         )
       }
 
       println()
 
-      //---------------------------------------------
-      // COPY PARAMETRISED PROJECT FILES TO G8 FOLDER
-      //---------------------------------------------
+      //------------------------------------------------------
+      // COPY PARAMETRISED PROJECT FILES TO TEMPLATE G8 FOLDER
+      //------------------------------------------------------
 
       import scala.collection.JavaConverters.asScalaIterator
 
       val gitIgnore = GitIgnore(config.ignoredPaths)
 
-      val sourcePaths: Iterator[Path] = config.sourceFolder.listRecursively
-        .map { source =>
-          val sourcePath: Path = config.sourceFolder.relativize(source)
+      val (sourcePaths, placeholderStats) = config.sourceFolder.listRecursively
+        .foldLeft((Seq.empty[Path], Map.empty[String, Int])) { case ((paths, inputStats), source) =>
+          val sourcePath: Path =
+            config.sourceFolder.relativize(source)
           if (gitIgnore.isAllowed(sourcePath)) {
-            val targetPath = TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements)
-            val target = File(targetG8Folder.path.resolve(targetPath))
+            val (targetPath, pathReplacementsStats) =
+              TemplateUtils.templatePathFor(sourcePath, contentFilesReplacements, inputStats)
+            val target =
+              File(targetG8Folder.path.resolve(targetPath))
             if (sourcePath == targetPath)
               println(s"Processing $ANSI_YELLOW$sourcePath$ANSI_RESET")
             else
               println(s"Processing $ANSI_YELLOW$sourcePath$ANSI_RESET as $ANSI_CYAN$targetPath$ANSI_RESET")
             if (source.isDirectory) {
               config.targetFolder.createDirectoryIfNotExists()
-              None
+              (paths, inputStats)
             }
             else {
               target.createFileIfNotExists(createParents = true)
-              target.write(
-                TemplateUtils.replace(TemplateUtils.escape(source.contentAsString), contentFilesReplacements)
-              )
-              Some(sourcePath)
+              val (template, outputStats) =
+                TemplateUtils.replace(
+                  TemplateUtils.escape(source.contentAsString),
+                  contentFilesReplacements,
+                  pathReplacementsStats
+                )
+              target.write(template)
+              (paths :+ sourcePath, outputStats)
             }
           }
-          else None
+          else (paths, inputStats)
         }
-        .collect { case Some(path) => path }
 
-      //---------------------------------------
-      // COPY OR CREATE STATIC PROJECT FILES
-      //---------------------------------------
+      println()
+      println("Template placeholder stats:")
 
-      val defaultPropertiesFile = targetG8Folder.createChild("default.properties")
-      defaultPropertiesFile.write(
-        TemplateUtils.prepareDefaultProperties(
-          config.sourceFolder.path.getFileName.toString,
-          config.packageName,
-          keywords,
-          config.keywordValueMap
-        )
-      )
+      placeholderStats.foreach {
+        case (keyword, count) if count > 0 =>
+          println(s"\t$ANSI_PURPLE$keyword$ANSI_RESET : $ANSI_GREEN$count$ANSI_RESET")
+        case _ =>
+      }
 
-      //---------------------------------------
-      // COPY PARAMETRISED BUILD FILES
-      //---------------------------------------
+      //----------------------------------------------------
+      // COPY PARAMETRISED BUILD FILES TO TEMPLATE G8 FOLDER
+      //----------------------------------------------------
+
+      val placeholders: Seq[(String, String)] =
+        TemplateUtils
+          .computePlaceholders(
+            config.sourceFolder.path.getFileName.toString,
+            config.packageName,
+            keywords,
+            config.keywordValueMap,
+            placeholderStats
+          )
 
       val buildFilesReplacements = {
         val testTemplateName = config.sourceFolder.name
 
-        val customReadmeHeader: Option[String] = config.customReadmeHeaderPath.flatMap { path =>
-          val file = File(config.sourceFolder.path.resolve(path))
-          if (file.exists && file.isRegularFile) Option(file.contentAsString)
-          else None
-        }
+        val customReadmeHeader: Option[String] =
+          config.customReadmeHeaderPath.flatMap { path =>
+            val file = File(config.sourceFolder.path.resolve(path))
+            if (file.exists && file.isRegularFile) Option(file.contentAsString)
+            else None
+          }
 
         val customReadmeHeaderPathOpt: String =
           config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path "$path"""").getOrElse("")
@@ -148,8 +160,12 @@ trait MakeItG8Creator extends EscapeCodes {
           "$templateName$"        -> config.templateName,
           "$templateDescription$" -> config.templateDescription,
           "$gitRepositoryName$"   -> config.templateName,
-          "$placeholders$"        -> contentFilesReplacements.map { case (k, v) => s"$v -> $k" }.mkString("\n\t"),
-          "$exampleTargetTree$"   -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
+          "$placeholders$" -> contentFilesReplacements
+            .collect {
+              case (value, key) if placeholders.exists { case (k, v) => s"$$$k$$" == key } => s"$key -> $value"
+            }
+            .mkString("\n\t"),
+          "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
           "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ config.packageName
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
@@ -173,7 +189,7 @@ trait MakeItG8Creator extends EscapeCodes {
       }
 
       println()
-      println("Build file content replacements:")
+      println("Build files replacements:")
 
       println(
         buildFilesReplacements
@@ -196,20 +212,36 @@ trait MakeItG8Creator extends EscapeCodes {
               if (targetFile.name.endsWith(".sh")) {
                 targetFile.addPermission(PosixFilePermission.OWNER_EXECUTE)
               }
+              val (template, stats) =
+                TemplateUtils.replace(content, buildFilesReplacements, Map.empty)
               targetFile
                 .clear()
-                .write(
-                  TemplateUtils
-                    .replace(content, buildFilesReplacements)
-                )
-            } orElse {
-            Failure(new Exception(s"Failed to create build file $path"))
-          }
+                .write(template)
+            }
+            .orElse {
+              Failure(new Exception(s"Failed to create build file $path"))
+            }
         }
         else {
           println(s"Skipping $ANSI_YELLOW$path$ANSI_RESET")
         }
       }
+
+      //----------------------------------------------------------
+      // COPY OR CREATE STATIC PROJECT FILES IN TEMPLATE G8 FOLDER
+      //----------------------------------------------------------
+
+      val defaultPropertiesFile =
+        targetG8Folder.createChild("default.properties")
+
+      defaultPropertiesFile
+        .write(
+          placeholders
+            .map { case (key, value) => s"$key=$value" }
+            .mkString("\n")
+        )
+
+      ()
     }.toEither
 }
 

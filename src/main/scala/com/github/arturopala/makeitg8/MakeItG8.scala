@@ -209,7 +209,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
             askNextKeyword(map)
           else {
             val defaultKey =
-              TemplateUtils.decapitalize(TemplateUtils.parseKeyword(word.get).map(TemplateUtils.capitalize).mkString)
+              TemplateUtils.decapitalize(TemplateUtils.parseWord(word.get).map(TemplateUtils.capitalize).mkString)
             val key =
               askString(
                 s"""${ANSI_GREEN}Select the key for "$ANSI_PURPLE${word.get}$ANSI_RESET" phrase, default [$defaultKey]: $ANSI_RESET""",

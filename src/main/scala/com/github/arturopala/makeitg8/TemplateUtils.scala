@@ -26,10 +26,14 @@ object TemplateUtils {
   // UTILITY AND HELPER FUNCTIONS
   //---------------------------------------
 
-  final def templatePathFor(path: Path, replacements: Seq[(String, String)]): Path =
-    Paths.get(
-      replace(path.toString, replacements)
-    )
+  final def templatePathFor(
+    path: Path,
+    replacements: Seq[(String, String)],
+    inputStats: Map[String, Int] = Map.empty
+  ): (Path, Map[String, Int]) = {
+    val (s, outputStats) = replace(path.toString, replacements, inputStats)
+    (Paths.get(s), outputStats)
+  }
 
   final def escape(text: String): String =
     text
@@ -38,34 +42,58 @@ object TemplateUtils {
 
   sealed trait Part {
     val value: String
+    val isReplacement: Boolean
   }
 
   final case class Text(value: String) extends Part {
-    def replace(from: String, to: String): Seq[Part] = {
+    val isReplacement: Boolean = false
+    def replace(from: String, to: String): (Seq[Part], Int) = {
       val i0 = value.indexOf(from)
-      if (i0 < 0) Seq(this)
-      else
-        Seq(
-          Text(value.substring(0, i0)),
-          Replacement(to)
-        ) ++ Text(value.substring(i0 + from.length)).replace(from, to)
+      if (i0 < 0) (Seq(this), 0)
+      else {
+        val (seq, count) =
+          Text(value.substring(i0 + from.length))
+            .replace(from, to)
+        (
+          Seq(
+            Text(value.substring(0, i0)),
+            Replacement(to)
+          ) ++ seq,
+          count + 1
+        )
+      }
     }
   }
 
-  final case class Replacement(value: String) extends Part
+  final case class Replacement(value: String) extends Part {
+    val isReplacement: Boolean = true
+  }
 
-  final def replace(text: String, replacements: Seq[(String, String)]): String = {
+  final def replace(
+    text: String,
+    replacements: Seq[(String, String)],
+    placeholderStats: Map[String, Int] = Map.empty
+  ): (String, Map[String, Int]) = {
     val initial: Seq[Part] = Seq(Text(text))
-    replacements
+    val (parts, outputStats) = replacements
       .sortBy { case (f, _) => -f.length }
-      .foldLeft(initial) { case (seq, (from, to)) =>
-        seq.flatMap {
-          case r: Replacement => Seq(r)
-          case t: Text        => t.replace(from, to)
-        }
+      .foldLeft[(Seq[Part], Map[String, Int])]((initial, placeholderStats)) { case ((seq, stats), (from, to)) =>
+        val (seq1, count) =
+          seq.foldLeft((Seq.empty[Part], stats.getOrElse(to, 0))) {
+            case ((s, c), r: Replacement) => (s :+ r, c)
+            case ((s, c), t: Text) =>
+              val (s1, c1) =
+                t.replace(from, to)
+              (s ++ s1, c + c1)
+          }
+        (seq1, stats.updated(to, count))
       }
-      .map(_.value)
-      .mkString
+    (
+      parts
+        .map(_.value)
+        .mkString,
+      outputStats
+    )
   }
 
   final def prepareKeywordsReplacements(
@@ -75,7 +103,7 @@ object TemplateUtils {
     keywords.flatMap(k => prepareKeywordReplacement(k, keywordValueMap.getOrElse(k, k)))
 
   final def prepareKeywordReplacement(keyword: String, value: String): Seq[(String, String)] = {
-    val parts = parseKeyword(value)
+    val parts = parseWord(value)
     val lowercaseParts = parts.map(lowercase)
     val uppercaseParts = parts.map(uppercase)
 
@@ -110,43 +138,60 @@ object TemplateUtils {
       )
   }
 
-  final def prepareDefaultProperties(
+  final def computePlaceholders(
     name: String,
     packageName: Option[String],
     keywords: Seq[String],
-    keywordValueMap: Map[String, String]
-  ): String = {
-    val keywordsMapping = keywords
-      .flatMap { keyword =>
-        Seq(
-          s"""$keyword=${keywordValueMap(keyword)}""",
-          s"""${keyword}Camel=$$$keyword;format="Camel"$$""",
-          s"""${keyword}camel=$$$keyword;format="camel"$$""",
-          s"""${keyword}NoSpaceLowercase=$$$keyword;format="camel,lowercase"$$""",
-          s"""${keyword}NoSpaceUppercase=$$$keyword;format="Camel,uppercase"$$""",
-          s"""${keyword}Snake=$$$keyword;format="snake,uppercase"$$""",
-          s"""${keyword}snake=$$$keyword;format="snake,lowercase"$$""",
-          s"""${keyword}Package=$$$keyword;format="package"$$""",
-          s"""${keyword}PackageLowercase=$$$keyword;format="lowercase,package"$$""",
-          s"""${keyword}Packaged=$$$keyword;format="packaged"$$""",
-          s"""${keyword}PackagedLowercase=$$$keyword;format="packaged,lowercase"$$""",
-          s"""${keyword}Hyphen=$$$keyword;format="normalize"$$""",
-          s"""${keyword}Uppercase=$$$keyword;format="uppercase"$$""",
-          s"""${keyword}Lowercase=$$$keyword;format="lowercase"$$"""
+    keywordValueMap: Map[String, String],
+    placeholderStats: Map[String, Int]
+  ): Seq[(String, String)] = {
+
+    val namePropertyValue: Option[String] =
+      if (keywords.nonEmpty) Some(s"${keywords.minBy(_.length)}Hyphen") else None
+
+    val placeholderProperties: Seq[(String, String)] =
+      keywords.map { keyword =>
+        val placeholders = Seq(
+          s"""$keyword"""                    -> s"""${keywordValueMap(keyword)}""",
+          s"""${keyword}Camel"""             -> s"""$$$keyword;format="Camel"$$""",
+          s"""${keyword}camel"""             -> s"""$$$keyword;format="camel"$$""",
+          s"""${keyword}NoSpaceLowercase"""  -> s"""$$$keyword;format="camel,lowercase"$$""",
+          s"""${keyword}NoSpaceUppercase"""  -> s"""$$$keyword;format="Camel,uppercase"$$""",
+          s"""${keyword}Snake"""             -> s"""$$$keyword;format="snake,uppercase"$$""",
+          s"""${keyword}snake"""             -> s"""$$$keyword;format="snake,lowercase"$$""",
+          s"""${keyword}Package"""           -> s"""$$$keyword;format="package"$$""",
+          s"""${keyword}PackageLowercase"""  -> s"""$$$keyword;format="lowercase,package"$$""",
+          s"""${keyword}Packaged"""          -> s"""$$$keyword;format="packaged"$$""",
+          s"""${keyword}PackagedLowercase""" -> s"""$$$keyword;format="packaged,lowercase"$$""",
+          s"""${keyword}Hyphen"""            -> s"""$$$keyword;format="normalize"$$""",
+          s"""${keyword}Uppercase"""         -> s"""$$$keyword;format="uppercase"$$""",
+          s"""${keyword}Lowercase"""         -> s"""$$$keyword;format="lowercase"$$"""
         )
-      }
-      .mkString("\n")
-    s"""$keywordsMapping
-    ${if (packageName.isDefined)
-      s"""|package=${packageName.get}
-      |packaged=$$package;format="packaged"$$"""
-    else ""}
-      |name=${if (keywords.nonEmpty) s"""$$${keywords.minBy(_.length)}Hyphen$$""" else name}
-     """.stripMargin
+        val required =
+          placeholders.filter { case (key, value) =>
+            placeholderStats.get(s"$$$key$$").exists(_ > 0) ||
+              namePropertyValue.contains(key)
+          }
+        if (required.nonEmpty && !required.exists(_._1 == keyword))
+          (placeholders(0) +: required)
+        else
+          required
+      }.flatten
+
+    val packageProperties: Seq[(String, String)] =
+      if (packageName.isDefined)
+        Seq("package" -> packageName.get, "packaged" -> """$package;format="packaged"$""")
+      else
+        Seq.empty
+
+    val nameProperty: Seq[(String, String)] =
+      Seq("name" -> namePropertyValue.map(p => s"$$$p$$").getOrElse(name))
+
+    packageProperties ++ placeholderProperties ++ nameProperty
   }
 
-  final def parseKeyword(keyword: String): List[String] =
-    keyword
+  final def parseWord(word: String): List[String] =
+    word
       .foldLeft((List.empty[String], false)) { case ((list, split), ch) =>
         if (ch == ' ' || ch == '-') (list, true)
         else
@@ -154,7 +199,7 @@ object TemplateUtils {
             list match {
               case Nil => s"$ch" :: Nil
               case head :: tail =>
-                if (split || splitAt(head.head, ch))
+                if (split || (head.nonEmpty && shouldSplitAt(head, ch)))
                   s"$ch" :: list
                 else
                   s"$ch$head" :: tail
@@ -163,13 +208,24 @@ object TemplateUtils {
           )
       }
       ._1
-      .map(_.reverse)
-      .reverse
+      .foldLeft(List.empty[String]) {
+        case (Nil, part) => List(part.reverse)
+        case (list @ (head :: tail), part) =>
+          if (head.length <= 1)
+            (part.reverse + head) :: tail
+          else
+            part.reverse :: list
+      }
 
   import Character._
-  final def splitAt(prev: Char, ch: Char): Boolean =
-    (isUpperCase(ch) && (!isUpperCase(prev) || isDigit(prev))) ||
-      (isDigit(ch) && (!isDigit(prev) || isUpperCase(prev)))
+  final def shouldSplitAt(current: String, next: Char): Boolean = {
+    val head = current.head
+    (isUpperCase(next) && (!isUpperCase(head) || isDigit(head))) ||
+    (isDigit(next) && (current.length > 1) && (isUpperCase(head) || !(isDigit(head) || isPunctuation(head))))
+  }
+
+  final def isPunctuation(ch: Char): Boolean =
+    ch.getType >= 20 && ch.getType <= 30
 
   final def uppercase(keyword: String): String = keyword.toUpperCase
   final def lowercase(keyword: String): String = keyword.toLowerCase

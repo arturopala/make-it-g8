@@ -32,10 +32,10 @@ trait FileTree {
 
   private val root = Paths.get("/")
 
-  def sort(paths: Iterator[Path]): Seq[Path] =
-    paths.toSeq.sortWith((pl, pr) => comparePaths(pl, pr, 0))
+  def sort(paths: Seq[Path]): Seq[Path] =
+    paths.sortWith((pl, pr) => comparePaths(pl, pr, 0))
 
-  def compute(paths: Iterator[Path]): Tree = {
+  def compute(paths: Seq[Path]): Tree = {
 
     def leafs(prefix: Path, p2: Path): Tree =
       (0 until p2.getNameCount).toList

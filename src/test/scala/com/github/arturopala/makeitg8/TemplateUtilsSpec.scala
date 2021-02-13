@@ -23,17 +23,29 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
 
   "TemplateUtils" should {
     "parse keyword" in {
-      TemplateUtils.parseKeyword("foo") shouldBe List("foo")
-      TemplateUtils.parseKeyword("fooBar") shouldBe List("foo", "Bar")
-      TemplateUtils.parseKeyword("FooBar") shouldBe List("Foo", "Bar")
-      TemplateUtils.parseKeyword("FooBBar") shouldBe List("Foo", "BBar")
-      TemplateUtils.parseKeyword("Foo Bar") shouldBe List("Foo", "Bar")
-      TemplateUtils.parseKeyword("Foo bar") shouldBe List("Foo", "bar")
-      TemplateUtils.parseKeyword("Foo bar Zoo") shouldBe List("Foo", "bar", "Zoo")
-      TemplateUtils.parseKeyword("Foo bar_Zoo") shouldBe List("Foo", "bar_", "Zoo")
-      TemplateUtils.parseKeyword("Foo bar_zoo") shouldBe List("Foo", "bar_zoo")
-      TemplateUtils.parseKeyword("Foo-bar-Zoo") shouldBe List("Foo", "bar", "Zoo")
-      TemplateUtils.parseKeyword("foo-bar-zoo") shouldBe List("foo", "bar", "zoo")
+      TemplateUtils.parseWord("") shouldBe Nil
+      TemplateUtils.parseWord(" ") shouldBe Nil
+      TemplateUtils.parseWord("   ") shouldBe Nil
+      TemplateUtils.parseWord("  f ") shouldBe List("f")
+      TemplateUtils.parseWord("foo") shouldBe List("foo")
+      TemplateUtils.parseWord("fooBar") shouldBe List("foo", "Bar")
+      TemplateUtils.parseWord("FooBar") shouldBe List("Foo", "Bar")
+      TemplateUtils.parseWord("FooBBar") shouldBe List("Foo", "BBar")
+      TemplateUtils.parseWord("Foo Bar") shouldBe List("Foo", "Bar")
+      TemplateUtils.parseWord("Foo bar") shouldBe List("Foo", "bar")
+      TemplateUtils.parseWord("Foo bar Zoo") shouldBe List("Foo", "bar", "Zoo")
+      TemplateUtils.parseWord("Foo bar_Zoo") shouldBe List("Foo", "bar_", "Zoo")
+      TemplateUtils.parseWord("Foo bar_zoo") shouldBe List("Foo", "bar_zoo")
+      TemplateUtils.parseWord("Foo-bar-Zoo") shouldBe List("Foo", "bar", "Zoo")
+      TemplateUtils.parseWord("foo-bar-zoo") shouldBe List("foo", "bar", "zoo")
+      TemplateUtils.parseWord("9786") shouldBe List("9786")
+      TemplateUtils.parseWord("97#86") shouldBe List("97#86")
+      TemplateUtils.parseWord("foo9786") shouldBe List("foo", "9786")
+      TemplateUtils.parseWord("Do It G8") shouldBe List("Do", "It", "G8")
+      TemplateUtils.parseWord("Play27") shouldBe List("Play", "27")
+      TemplateUtils.parseWord("Scala3") shouldBe List("Scala3")
+      TemplateUtils.parseWord("Scala3x") shouldBe List("Scala", "3x")
+      TemplateUtils.parseWord("Scala 2.13") shouldBe List("Scala", "2.13")
     }
 
     "create replacements sequence" in {
@@ -65,6 +77,40 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
       TemplateUtils.prepareKeywordReplacement("key", "9786") shouldBe List(
         ("9786", "$key$")
       )
+
+      TemplateUtils.prepareKeywordReplacement("key", "foo9786") shouldBe List(
+        ("Foo9786", "$keyCamel$"),
+        ("foo9786", "$keycamel$"),
+        ("foo9786", "$keyNoSpaceLowercase$"),
+        ("FOO9786", "$keyNoSpaceUppercase$"),
+        ("foo_9786", "$keysnake$"),
+        ("FOO_9786", "$keySnake$"),
+        ("foo.9786", "$keyPackage$"),
+        ("foo.9786", "$keyPackageLowercase$"),
+        ("foo/9786", "$keyPackaged$"),
+        ("foo/9786", "$keyPackagedLowercase$"),
+        ("foo-9786", "$keyHyphen$"),
+        ("foo 9786", "$keyLowercase$"),
+        ("FOO 9786", "$keyUppercase$"),
+        ("foo9786", "$key$")
+      )
+
+      TemplateUtils.prepareKeywordReplacement("key", "Do It G8") shouldBe List(
+        ("DoItG8", "$keyCamel$"),
+        ("doItG8", "$keycamel$"),
+        ("doitg8", "$keyNoSpaceLowercase$"),
+        ("DOITG8", "$keyNoSpaceUppercase$"),
+        ("do_it_g8", "$keysnake$"),
+        ("DO_IT_G8", "$keySnake$"),
+        ("Do.It.G8", "$keyPackage$"),
+        ("do.it.g8", "$keyPackageLowercase$"),
+        ("Do/It/G8", "$keyPackaged$"),
+        ("do/it/g8", "$keyPackagedLowercase$"),
+        ("do-it-g8", "$keyHyphen$"),
+        ("do it g8", "$keyLowercase$"),
+        ("DO IT G8", "$keyUppercase$"),
+        ("Do It G8", "$key$")
+      )
     }
 
     "create multiple replacements sequences" in {
@@ -84,38 +130,53 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
     }
 
     "amend the text using provided replacements" in {
-      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$")) shouldBe "$foo$ Bar"
-      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$", "bar" -> "$Bar$")) shouldBe "$foo$ Bar"
-      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$", "Bar" -> "$Bar$")) shouldBe "$foo$ $Bar$"
-      TemplateUtils.replace("Foo Bar", Seq("foo" -> "$Foo$", "Bar" -> "$Bar$")) shouldBe "Foo $Bar$"
-      TemplateUtils.replace(
-        """
-          |Foo
-          |Zoo
-          |Bar
-          |
-          |999
+      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$")) shouldBe
+        ("$foo$ Bar", Map("$foo$" -> 1))
+      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$", "bar" -> "$Bar$")) shouldBe
+        ("$foo$ Bar", Map("$foo$" -> 1, "$Bar$" -> 0))
+      TemplateUtils.replace("Foo Bar", Seq("Foo" -> "$foo$", "Bar" -> "$Bar$")) shouldBe
+        ("$foo$ $Bar$", Map("$foo$" -> 1, "$Bar$" -> 1))
+      TemplateUtils.replace("Foo Bar", Seq("foo" -> "$Foo$", "Bar" -> "$Bar$")) shouldBe
+        ("Foo $Bar$", Map("$Foo$" -> 0, "$Bar$" -> 1))
+      TemplateUtils
+        .replace(
+          """
+            |Foo
+            |Zoo
+            |Bar
+            |
+            |999
         """.stripMargin,
-        Seq("Foo" -> "$foo$", "Bar" -> "$bar$")
-      ) shouldBe
-        """
+          Seq("Foo" -> "$foo$", "Bar" -> "$bar$")
+        ) shouldBe
+        ("""
           |$foo$
           |Zoo
           |$bar$
           |
           |999
-        """.stripMargin
+        """.stripMargin, Map("$foo$" -> 1, "$bar$" -> 1))
     }
 
     "amend the text using provided replacements when overlap" in {
-      TemplateUtils.replace("FooFoo Bar", Seq("Foo" -> "$foo$", "FooF" -> "$foof$")) shouldBe "$foof$oo Bar"
-      TemplateUtils.replace("FooFooFoo Bar", Seq("Foo" -> "$foo$", "FooF" -> "$foof$")) shouldBe "$foof$oo$foo$ Bar"
-      TemplateUtils.replace("FooFooFoo Bar", Seq("Foo" -> "FooFoo", "FooF" -> "FooFF")) shouldBe "FooFFooFooFoo Bar"
+      TemplateUtils.replace("FooFoo Bar", Seq("Foo" -> "$foo$", "FooF" -> "$foof$")) shouldBe
+        ("$foof$oo Bar", Map("$foof$" -> 1, "$foo$" -> 0))
+
+      TemplateUtils.replace(
+        "FooFooFoo Bar",
+        Seq("Foo" -> "$foo$", "FooF" -> "$foof$")
+      ) shouldBe ("$foof$oo$foo$ Bar", Map("$foo$" -> 1, "$foof$" -> 1))
+
+      TemplateUtils.replace(
+        "FooFooFoo Bar",
+        Seq("Foo" -> "FooFoo", "FooF" -> "FooFF")
+      ) shouldBe ("FooFFooFooFoo Bar", Map("FooFoo" -> 1, "FooFF" -> 1))
+
       TemplateUtils
         .replace(
           "FooBarFooFoo Bar",
           Seq("Foo" -> "FooBar", "FooBar" -> "Foo", "Bar" -> "Foo")
-        ) shouldBe "FooFooBarFooBar Foo"
+        ) shouldBe ("FooFooBarFooBar Foo", Map("Foo" -> 2, "FooBar" -> 2))
     }
   }
 

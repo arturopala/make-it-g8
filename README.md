@@ -13,11 +13,11 @@ Place it on GitHub and call with the `g8` command line tool or `sbt new` command
 
 ## Advantages of using make-it-g8
 
-* quick template creation
-* easy parametrization with multiple replacement keys
-* derives automatically common key variants: camel, snake, hyphen, package, packaged, etc.
-* adds a script to generate an example project and test it
-* adds a script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
+* quick template creation with proper escaping of $ characters
+* easy template parametrisation with multiple placeholder values
+* derives automatically common placeholder variants: camel, snake, hyphen, package, packaged, etc.
+* generates script to generate an example project and test it
+* generates script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
 * generates README.md with the template usage guide and an example project filetree diagram
 
 ## Prerequisites

@@ -25,18 +25,18 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
 
   "FileTree" should {
     "compute a tree" in {
-      FileTree.compute(Seq(Paths.get("test.scala")).iterator) shouldBe List(0 -> "test.scala")
-      FileTree.compute(Seq(Paths.get("/test", "test.scala")).iterator) shouldBe List(0 -> "test", 1 -> "test.scala")
-      FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala")).iterator) should contain
+      FileTree.compute(Seq(Paths.get("test.scala"))) shouldBe List(0 -> "test.scala")
+      FileTree.compute(Seq(Paths.get("/test", "test.scala"))) shouldBe List(0 -> "test", 1 -> "test.scala")
+      FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala"))) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))
-      FileTree.compute(Seq(Paths.get("/test", "test.scala"), Paths.get("/test")).iterator) should contain
+      FileTree.compute(Seq(Paths.get("/test", "test.scala"), Paths.get("/test"))) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))
-      FileTree.compute(Seq(Paths.get("/test", "test.scala"), Paths.get("/test")).iterator) should contain
+      FileTree.compute(Seq(Paths.get("/test", "test.scala"), Paths.get("/test"))) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))
-      FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala")).iterator) should contain
+      FileTree.compute(Seq(Paths.get("/test"), Paths.get("/test", "test.scala"))) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "test.scala"))
       FileTree.compute(
-        Seq(Paths.get("/test"), Paths.get("/test", "foo", "bar.txt"), Paths.get("/test", "test.scala")).iterator
+        Seq(Paths.get("/test"), Paths.get("/test", "foo", "bar.txt"), Paths.get("/test", "test.scala"))
       ) should contain
         .theSameElementsInOrderAs(List(0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala"))
       FileTree.compute(
@@ -45,7 +45,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("foo.bar"),
           Paths.get("/test", "test.scala")
-        ).iterator
+        )
       ) should contain
         .theSameElementsInOrderAs(List(0 -> "foo.bar", 0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala"))
       FileTree.compute(
@@ -54,7 +54,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("/bar", "foo.bar"),
           Paths.get("/test", "test.scala")
-        ).iterator
+        )
       ) should contain
         .theSameElementsInOrderAs(
           List(0 -> "bar", 1 -> "foo.bar", 0 -> "test", 1 -> "foo", 2 -> "bar.txt", 1 -> "test.scala")
@@ -68,7 +68,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("foo.bar"),
           Paths.get("/test", "test.scala")
-        ).iterator
+        )
       )
       FileTree.draw(pathTree) shouldBe
         """├── foo.bar
@@ -86,7 +86,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/test", "foo", "bar.txt"),
           Paths.get("/bar", "foo.bar"),
           Paths.get("/test", "test.scala")
-        ).iterator
+        )
       )
       FileTree.draw(pathTree) shouldBe
         """├── bar
@@ -100,7 +100,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
     }
 
     "draw a tree 3" in {
-      val pathTree = FileTree.compute(Seq(Paths.get("/test")).iterator)
+      val pathTree = FileTree.compute(Seq(Paths.get("/test")))
       FileTree.draw(pathTree) shouldBe
         """└── test""".stripMargin
     }
@@ -112,7 +112,7 @@ class FileTreeSpec extends AnyWordSpec with Matchers {
           Paths.get("/foo", "zoo", "bar.txt"),
           Paths.get("/bar", "foo", "foo.bar"),
           Paths.get("/zoo", "foo", "bar", "zoo.scala")
-        ).iterator
+        )
       )
       FileTree.draw(pathTree) shouldBe
         """├── bar
