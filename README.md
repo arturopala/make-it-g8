@@ -4,20 +4,22 @@ Tool to convert your project into a giter8 template
 ![Build](https://github.com/arturopala/make-it-g8/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
 
 ## Motivation
-Creating new [giter8](http://www.foundweekends.org/giter8) template isn't hard, [see here](http://www.foundweekends.org/giter8/template.html), but sometimes it can be cumbersome, error-prone and tedious to test. 
-You may also want to automate template creation after changes made to the project without manually replacing package paths, file names and text chunks with the placeholders.
+Creating new [giter8](http://www.foundweekends.org/giter8) template is easy, but maintaining it later not as much. You have to do all the tedious placeholder replacing job again, and again, both in the content of the files and in the file paths.
 
-## What does it mean to create g8 template?
-The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project folder where files or paths may contain variable placeholders, e.g. `$name$`. 
+The `make-it-g8` tool provides both convenient way to create new g8 template, and to update it later multiple times without effort.
+
+## What is g8 template?
+The [giter8](http://www.foundweekends.org/giter8) template is an ordinary project having nested `src/main/g8` folder where files or paths may contain placeholders, e.g. `$name$`.
+
 Place it on GitHub and call with the `g8` command line tool or `sbt new` command to spring your own project.
 
-## Advantages of using make-it-g8
+## Advantages of using `make-it-g8`
 
 * quick template creation with proper escaping of $ characters
 * easy template parametrisation with multiple placeholder values
 * derives automatically common placeholder variants: camel, snake, hyphen, package, packaged, etc.
-* generates script to generate an example project and test it
-* generates script to update the template after changes made to the example project (covers full create-change-validate-update cycle)
+* generates script to generate an example project and run test on it
+* generates script updating the template after changes were made to the example project (covers full create-change-validate-update cycle)
 * generates README.md with the template usage guide and an example project filetree diagram
 
 ## Prerequisites
@@ -29,7 +31,7 @@ Place it on GitHub and call with the `g8` command line tool or `sbt new` command
 
 ## Usage
 
-### Consider installing the tool with coursier
+### Consider installing the tool locally with coursier
 
     cs install --contrib make-it-g8
 
@@ -41,7 +43,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.14.0 -- --interactive
+    cs launch com.github.arturopala:make-it-g8_2.12:1.15.0 -- --interactive
 
 or run using local clone of the repository:
 
@@ -57,7 +59,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.14.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.15.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
 or run using local clone of the repository:
 
@@ -93,7 +95,7 @@ or run using local clone of the repository:
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.14.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.15.0"      
       
 ## Example template created with make-it-g8
 
