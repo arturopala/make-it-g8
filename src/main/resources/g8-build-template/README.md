@@ -12,7 +12,7 @@ How to create a new project based on the template?
 * Decide your project name (the hardest part :))
 * Run the command
 
-    `sbt new {GITHUB_USER}/$templateName$`
+    `sbt new {GITHUB_USER}/$templateName$.g8 $g8CommandLineArgs$`
 
 or    
 
