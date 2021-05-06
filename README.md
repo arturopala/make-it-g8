@@ -3,6 +3,10 @@ Tool to convert your project into a giter8 template
 
 ![Build](https://github.com/arturopala/make-it-g8/workflows/Build/badge.svg) ![Maven Central](https://img.shields.io/maven-central/v/com.github.arturopala/make-it-g8_2.12.svg) ![GitHub](https://img.shields.io/github/license/arturopala/make-it-g8.svg) ![GitHub code size in bytes](https://img.shields.io/github/languages/code-size/arturopala/make-it-g8.svg)
 
+## Demo
+
+[Watch make-it-g8 live demonstration on YouTube.](https://youtu.be/-Gd5xGiiUtI)
+
 ## Motivation
 Creating new [giter8](http://www.foundweekends.org/giter8) template is easy, but maintaining it later not as much. You have to do all the tedious placeholder replacing job again, and again, both in the content of the files and in the file paths.
 
