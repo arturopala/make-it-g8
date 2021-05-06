@@ -17,7 +17,6 @@ lazy val root = (project in file("."))
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
     scalafmtOnCompile in Compile := true,
     scalafmtOnCompile in Test := true,
-    releaseVersionBump := sbtrelease.Version.Bump.Minor,
-    publishTo := sonatypePublishToBundle.value,
-    mainClass in (Compile, run) := Some("com.github.arturopala.makeitg8.MakeItG8")
+    mainClass in (Compile, run) := Some("com.github.arturopala.makeitg8.MakeItG8"),
+    versionScheme := Some("early-semver")
   )
