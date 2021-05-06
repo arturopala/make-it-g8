@@ -1,13 +1,26 @@
-ThisBuild / scalaVersion := "2.12.12"
-ThisBuild / organization := "com.github.arturopala"
-ThisBuild / organizationName := "Artur Opala"
-ThisBuild / startYear := Some(2020)
+inThisBuild(
+  List(
+    scalaVersion := "2.12.12",
+    organization := "com.github.arturopala",
+    organizationName := "Artur Opala",
+    homepage := Some(url("https://github.com/arturopala/make-it-g8")),
+    licenses := List("Apache-2.0" -> url("http://www.apache.org/licenses/LICENSE-2.0")),
+    developers := List(
+      Developer(
+        "arturopala",
+        "Artur Opala",
+        "opala.artur@gmail.com",
+        url("https://www.linkedin.com/in/arturopala")
+      )
+    ),
+    startYear := Some(2020)
+  )
+)
 
 lazy val root = (project in file("."))
   .enablePlugins(AutomateHeaderPlugin)
   .settings(
     name := "make-it-g8",
-    licenses += ("Apache-2.0", new URL("https://www.apache.org/licenses/LICENSE-2.0.txt")),
     libraryDependencies ++= Seq(
       "com.typesafe"          % "config"       % "1.4.1",
       "com.github.pathikrit" %% "better-files" % "3.9.1",
