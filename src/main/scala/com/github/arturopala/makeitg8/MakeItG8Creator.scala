@@ -177,7 +177,7 @@ trait MakeItG8Creator {
             }
             .mkString("\n\t"),
           "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
-          "$g8CommandLineArgs$" -> s"""${(keywordValueMap.toSeq ++ config.packageName
+          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ config.packageName
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
