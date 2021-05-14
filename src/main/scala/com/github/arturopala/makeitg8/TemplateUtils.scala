@@ -112,15 +112,16 @@ object TemplateUtils {
         Seq(value -> s"$$$keyword$$")
       else
         Seq(
+          value                                                     -> s"$$$keyword$$",
           lowercaseParts.map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
           decapitalize(lowercaseParts.map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
           lowercaseParts.mkString(" ")                              -> s"$$${keyword}Lowercase$$",
-          uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$",
-          value                                                     -> s"$$$keyword$$"
+          uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$"
         )
     }
     else
       Seq(
+        value                                                     -> s"$$$keyword$$",
         lowercaseParts.map(capitalize).mkString("")               -> s"$$${keyword}Camel$$",
         decapitalize(lowercaseParts.map(capitalize).mkString("")) -> s"$$${keyword}camel$$",
         lowercaseParts.mkString("")                               -> s"$$${keyword}NoSpaceLowercase$$",
@@ -133,8 +134,7 @@ object TemplateUtils {
         lowercaseParts.mkString("/")                              -> s"$$${keyword}PackagedLowercase$$",
         lowercaseParts.mkString("-")                              -> s"$$${keyword}Hyphen$$",
         lowercaseParts.mkString(" ")                              -> s"$$${keyword}Lowercase$$",
-        uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$",
-        value                                                     -> s"$$$keyword$$"
+        uppercaseParts.mkString(" ")                              -> s"$$${keyword}Uppercase$$"
       )
   }
 

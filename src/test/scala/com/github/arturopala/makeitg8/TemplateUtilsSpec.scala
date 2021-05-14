@@ -50,6 +50,7 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
 
     "create replacements sequence" in {
       TemplateUtils.prepareKeywordReplacement("key", "Foo Bar") shouldBe List(
+        ("Foo Bar", "$key$"),
         ("FooBar", "$keyCamel$"),
         ("fooBar", "$keycamel$"),
         ("foobar", "$keyNoSpaceLowercase$"),
@@ -62,16 +63,15 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
         ("foo/bar", "$keyPackagedLowercase$"),
         ("foo-bar", "$keyHyphen$"),
         ("foo bar", "$keyLowercase$"),
-        ("FOO BAR", "$keyUppercase$"),
-        ("Foo Bar", "$key$")
+        ("FOO BAR", "$keyUppercase$")
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "Foo") shouldBe List(
+        ("Foo", "$key$"),
         ("Foo", "$keyCamel$"),
         ("foo", "$keycamel$"),
         ("foo", "$keyLowercase$"),
-        ("FOO", "$keyUppercase$"),
-        ("Foo", "$key$")
+        ("FOO", "$keyUppercase$")
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "9786") shouldBe List(
@@ -79,6 +79,7 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "foo9786") shouldBe List(
+        ("foo9786", "$key$"),
         ("Foo9786", "$keyCamel$"),
         ("foo9786", "$keycamel$"),
         ("foo9786", "$keyNoSpaceLowercase$"),
@@ -91,11 +92,11 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
         ("foo/9786", "$keyPackagedLowercase$"),
         ("foo-9786", "$keyHyphen$"),
         ("foo 9786", "$keyLowercase$"),
-        ("FOO 9786", "$keyUppercase$"),
-        ("foo9786", "$key$")
+        ("FOO 9786", "$keyUppercase$")
       )
 
       TemplateUtils.prepareKeywordReplacement("key", "Do It G8") shouldBe List(
+        ("Do It G8", "$key$"),
         ("DoItG8", "$keyCamel$"),
         ("doItG8", "$keycamel$"),
         ("doitg8", "$keyNoSpaceLowercase$"),
@@ -108,24 +109,23 @@ class TemplateUtilsSpec extends AnyWordSpec with Matchers {
         ("do/it/g8", "$keyPackagedLowercase$"),
         ("do-it-g8", "$keyHyphen$"),
         ("do it g8", "$keyLowercase$"),
-        ("DO IT G8", "$keyUppercase$"),
-        ("Do It G8", "$key$")
+        ("DO IT G8", "$keyUppercase$")
       )
     }
 
     "create multiple replacements sequences" in {
       TemplateUtils.prepareKeywordsReplacements(Seq("bcde", "ABC"), Map("ABC" -> "abc")) shouldBe
         List(
+          ("bcde", "$bcde$"),
           ("Bcde", "$bcdeCamel$"),
           ("bcde", "$bcdecamel$"),
           ("bcde", "$bcdeLowercase$"),
           ("BCDE", "$bcdeUppercase$"),
-          ("bcde", "$bcde$"),
+          ("abc", "$ABC$"),
           ("Abc", "$ABCCamel$"),
           ("abc", "$ABCcamel$"),
           ("abc", "$ABCLowercase$"),
-          ("ABC", "$ABCUppercase$"),
-          ("abc", "$ABC$")
+          ("ABC", "$ABCUppercase$")
         )
     }
 
