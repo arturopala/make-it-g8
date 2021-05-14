@@ -30,7 +30,9 @@ import java.net.URI
 import java.nio.file.Path
 import java.net.URLEncoder
 
-object MakeItG8 extends App with MakeItG8Creator with AskUser with EscapeCodes {
+object MakeItG8 extends App with MakeItG8Creator with AskUser {
+
+  import EscapeCodes._
 
   readConfig().fold(
     {

@@ -19,7 +19,9 @@ package com.github.arturopala.makeitg8
 import scala.annotation.tailrec
 import scala.io.StdIn
 
-trait AskUser extends EscapeCodes {
+trait AskUser {
+
+  import EscapeCodes._
 
   final def askYesNo(prompt: String): Boolean =
     ask[Boolean](

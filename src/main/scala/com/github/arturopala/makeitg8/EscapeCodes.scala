@@ -16,7 +16,7 @@
 
 package com.github.arturopala.makeitg8
 
-trait EscapeCodes {
+object EscapeCodes {
   // colors
   val ANSI_RESET = "\u001B[0m"
   val ANSI_BLACK = "\u001B[30m"

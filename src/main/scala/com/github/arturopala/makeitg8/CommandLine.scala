@@ -24,7 +24,9 @@ import org.rogach.scallop.exceptions.{RequiredOptionNotFound, UnknownOption}
 import scala.util.control.NonFatal
 import scala.util.Try
 
-class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) with EscapeCodes {
+class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
+
+  import EscapeCodes._
 
   val sourcePath =
     opt[Path](name = "source", short = 's', descr = "Source code path, absolute or relative")

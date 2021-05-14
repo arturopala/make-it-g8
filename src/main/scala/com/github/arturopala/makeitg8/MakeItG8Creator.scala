@@ -24,7 +24,9 @@ import java.nio.file.attribute.PosixFilePermission
 
 import scala.util.{Failure, Try}
 
-trait MakeItG8Creator extends EscapeCodes {
+trait MakeItG8Creator {
+
+  import EscapeCodes._
 
   def createG8Template(config: MakeItG8Config): Either[Throwable, Unit] =
     Try {
