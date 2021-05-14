@@ -158,6 +158,15 @@ trait MakeItG8Creator {
         val customReadmeHeaderPathOpt: String =
           config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path "$path"""").getOrElse("")
 
+        val templateGithubUser: String = config.keywordValueMap
+          .get("templateGithubUser")
+          .orElse(GitUtils.remoteGithubUser(config.sourceFolder.toJava))
+          .orElse(GitUtils.remoteGithubUser(config.targetFolder.toJava))
+          .getOrElse("{GITHUB_USER}")
+
+        val keywordValueMap =
+          Map("templateGithubUser" -> templateGithubUser) ++ config.keywordValueMap
+
         Seq(
           "$templateName$"        -> config.templateName,
           "$templateDescription$" -> config.templateDescription,
@@ -168,7 +177,7 @@ trait MakeItG8Creator {
             }
             .mkString("\n\t"),
           "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
-          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ config.packageName
+          "$g8CommandLineArgs$" -> s"""${(keywordValueMap.toSeq ++ config.packageName
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
@@ -181,12 +190,13 @@ trait MakeItG8Creator {
             (s"""sbt "run --noclear --force --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} """ ++ config.packageName
               .map(p => s""" --package $p """)
               .getOrElse("") ++ s"""--description ${URLEncoder
-              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
+              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${keywordValueMap
               .map { case (k, v) =>
                 s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
               .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
-          "$customReadmeHeader$" -> customReadmeHeader.getOrElse("")
+          "$customReadmeHeader$" -> customReadmeHeader.getOrElse(""),
+          "$templateGithubUser$" -> templateGithubUser
         )
       }
 
