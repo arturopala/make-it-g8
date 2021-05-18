@@ -28,6 +28,8 @@ trait MakeItG8Creator {
 
   import EscapeCodes._
 
+  val KeyTemplateGithubUser = "templateGithubUser"
+
   def createG8Template(config: MakeItG8Config): Either[Throwable, Unit] =
     Try {
 
@@ -57,7 +59,8 @@ trait MakeItG8Creator {
       // PREPARE CONTENT REPLACEMENT KEYWORDS
       //---------------------------------------
 
-      val keywords: Seq[String] = config.keywordValueMap.toSeq.sortBy(p => -p._2.length).map(_._1)
+      val keywords: Seq[String] =
+        config.keywordValueMap.-(KeyTemplateGithubUser).toSeq.sortBy(p => -p._2.length).map(_._1)
 
       val contentFilesReplacements: Seq[(String, String)] =
         config.packageName
@@ -67,7 +70,10 @@ trait MakeItG8Creator {
               packageName                               -> "$package$"
             )
           )
-          .getOrElse(Seq.empty) ++ TemplateUtils.prepareKeywordsReplacements(keywords, config.keywordValueMap)
+          .getOrElse(Seq.empty) ++ TemplateUtils.prepareKeywordsReplacements(
+          keywords,
+          config.keywordValueMap.-(KeyTemplateGithubUser)
+        )
 
       println()
 
@@ -159,13 +165,13 @@ trait MakeItG8Creator {
           config.customReadmeHeaderPath.map(path => s"""--custom-readme-header-path "$path"""").getOrElse("")
 
         val templateGithubUser: String = config.keywordValueMap
-          .get("templateGithubUser")
+          .get(KeyTemplateGithubUser)
           .orElse(GitUtils.remoteGithubUser(config.sourceFolder.toJava))
           .orElse(GitUtils.remoteGithubUser(config.targetFolder.toJava))
           .getOrElse("{GITHUB_USER}")
 
         val keywordValueMap =
-          Map("templateGithubUser" -> templateGithubUser) ++ config.keywordValueMap
+          Map(KeyTemplateGithubUser -> templateGithubUser) ++ config.keywordValueMap
 
         Seq(
           "$templateName$"        -> config.templateName,
@@ -177,7 +183,7 @@ trait MakeItG8Creator {
             }
             .mkString("\n\t"),
           "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
-          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.toSeq ++ config.packageName
+          "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.-(KeyTemplateGithubUser).toSeq ++ config.packageName
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
@@ -190,7 +196,7 @@ trait MakeItG8Creator {
             (s"""sbt "run --noclear --force --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} """ ++ config.packageName
               .map(p => s""" --package $p """)
               .getOrElse("") ++ s"""--description ${URLEncoder
-              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
+              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${keywordValueMap
               .map { case (k, v) =>
                 s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
