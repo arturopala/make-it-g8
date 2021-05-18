@@ -190,7 +190,7 @@ trait MakeItG8Creator {
             (s"""sbt "run --noclear --force --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} """ ++ config.packageName
               .map(p => s""" --package $p """)
               .getOrElse("") ++ s"""--description ${URLEncoder
-              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${keywordValueMap
+              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${config.keywordValueMap
               .map { case (k, v) =>
                 s"""$k=${URLEncoder.encode(v, "utf-8")}"""
               }
