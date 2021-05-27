@@ -40,4 +40,12 @@ object GitUtils {
         .map(_._1)
     ).toOption.flatten
 
+  def currentBranch(folder: File): Option[String] =
+    Try(
+      process
+        .Process("git branch --show-current", folder)
+        .lineStream
+        .headOption
+    ).toOption.flatten
+
 }

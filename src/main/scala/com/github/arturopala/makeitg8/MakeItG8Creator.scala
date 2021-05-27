@@ -170,6 +170,11 @@ trait MakeItG8Creator {
           .orElse(GitUtils.remoteGithubUser(config.targetFolder.toJava))
           .getOrElse("{GITHUB_USER}")
 
+        val templateBranch: Option[String] =
+          GitUtils
+            .currentBranch(config.sourceFolder.toJava)
+            .orElse(GitUtils.currentBranch(config.targetFolder.toJava))
+
         val keywordValueMap =
           Map(KeyTemplateGithubUser -> templateGithubUser) ++ config.keywordValueMap
 
@@ -187,7 +192,7 @@ trait MakeItG8Creator {
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
-            .mkString(" ")} -o $testTemplateName""",
+            .mkString(" ")} ${templateBranch.map(branch => s"--branch $branch").getOrElse("")} -o $testTemplateName""",
           "$testTargetFolder$" -> config.scriptTestTarget,
           "$testTemplateName$" -> testTemplateName,
           "$testCommand$"      -> config.scriptTestCommand,
@@ -202,7 +207,8 @@ trait MakeItG8Creator {
               }
               .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse(""),
-          "$templateGithubUser$" -> templateGithubUser
+          "$templateGithubUser$" -> templateGithubUser,
+          "$templateBranch$"     -> templateBranch.getOrElse("")
         )
       }
 
