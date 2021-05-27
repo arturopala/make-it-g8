@@ -172,8 +172,7 @@ trait MakeItG8Creator {
 
         val templateBranch: Option[String] =
           GitUtils
-            .currentBranch(config.sourceFolder.toJava)
-            .orElse(GitUtils.currentBranch(config.targetFolder.toJava))
+            .currentBranch(config.targetFolder.toJava)
 
         val keywordValueMap =
           Map(KeyTemplateGithubUser -> templateGithubUser) ++ config.keywordValueMap
@@ -208,7 +207,7 @@ trait MakeItG8Creator {
               .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse(""),
           "$templateGithubUser$" -> templateGithubUser,
-          "$templateBranch$"     -> templateBranch.getOrElse("")
+          "$templateBranch$"     -> templateBranch.getOrElse("master")
         )
       }
 
