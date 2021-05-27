@@ -192,7 +192,7 @@ trait MakeItG8Creator {
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))
             .map { case (k, v) => s"""--$k="$v"""" }
-            .mkString(" ")} ${templateBranch.map(branch => s"--branch $branch").getOrElse("")} -o $testTemplateName""",
+            .mkString(" ")} -o $testTemplateName""",
           "$testTargetFolder$" -> config.scriptTestTarget,
           "$testTemplateName$" -> testTemplateName,
           "$testCommand$"      -> config.scriptTestCommand,
