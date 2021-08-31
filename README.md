@@ -99,12 +99,12 @@ or run using local clone of the repository:
 
 make-it-g8 is hosted in [The Maven Central repository](https://search.maven.org/artifact/com.github.arturopala/make-it-g8/)
 
-    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.21.0"      
+    libraryDependencies += "com.github.arturopala" %% "make-it-g8" % "1.23.0"      
       
 ## Example template created with make-it-g8
 
 * https://github.com/arturopala/cross-scala.g8
-* https://github.com/hmrc/template-play-27-frontend-fsm.g8
+* https://github.com/hmrc/template-play-frontend-fsm.g8
 
 ## Development
 
