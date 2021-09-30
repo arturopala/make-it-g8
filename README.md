@@ -47,7 +47,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.21.0 -- --interactive
+    cs launch com.github.arturopala:make-it-g8_2.12:1.23.0 -- --interactive
 
 or run using local clone of the repository:
 
@@ -63,7 +63,7 @@ Run after installation using:
 
 or launch using coursier:
 
-    cs launch com.github.arturopala:make-it-g8_2.12:1.21.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
+    cs launch com.github.arturopala:make-it-g8_2.12:1.23.0 -- --source {PATH} [--target {PATH}] [--name {STRING}] [--package {STRING}] [--description {STRINGURLENCODED}] [-K key=patternUrlEncoded]
 
 or run using local clone of the repository:
 
