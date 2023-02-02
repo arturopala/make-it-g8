@@ -186,7 +186,7 @@ trait MakeItG8Creator {
               case (value, key) if placeholders.exists { case (k, v) => s"$$$k$$" == key } => s"$key -> $value"
             }
             .mkString("\n\t"),
-          "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).lines.mkString("\n\t"),
+          "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).linesIterator.mkString("\n\t"),
           "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.-(KeyTemplateGithubUser).toSeq ++ config.packageName
             .map(p => Seq("package" -> p))
             .getOrElse(Seq.empty))

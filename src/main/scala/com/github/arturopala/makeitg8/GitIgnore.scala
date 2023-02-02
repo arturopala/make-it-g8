@@ -84,7 +84,7 @@ object GitIgnore {
 
   /** Parse .gitignore file content and return sequence of patterns. */
   def parseGitIgnore(gitIgnore: String): List[String] =
-    gitIgnore.lines.collect {
+    gitIgnore.linesIterator.collect {
       case line if line.trim.nonEmpty && !line.startsWith("#") =>
         removeTrailingNonEscapedSpaces(line)
     }.toList

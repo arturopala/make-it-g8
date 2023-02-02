@@ -1,6 +1,6 @@
 inThisBuild(
   List(
-    scalaVersion := "2.12.12",
+    scalaVersion := "2.12.17",
     organization := "com.github.arturopala",
     organizationName := "Artur Opala",
     homepage := Some(url("https://github.com/arturopala/make-it-g8")),

@@ -1,0 +1,9 @@
+# .github/workflows/dependency-graph.yml
+name: Update dependency graph
+on:
+  push:
+    branches:
+      - main # default branch of the project
+jobs:
+  dependency-graph:
+    uses: arturopala/workflows/.github/workflows/dependency-graph.yml@main
