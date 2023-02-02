@@ -12,9 +12,9 @@ on:
   pull_request:
     branches: [ master, main ]
 
+  workflow_dispatch:   
+
 jobs:
   build:
     uses: arturopala/workflows/.github/workflows/build.yml@main
-    secrets:
-      PAT: ${{ secrets.PAT }}
       
