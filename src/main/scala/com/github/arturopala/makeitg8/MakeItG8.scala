@@ -29,6 +29,7 @@ import java.nio.file.Paths
 import java.net.URI
 import java.nio.file.Path
 import java.net.URLEncoder
+import scala.sys.process
 
 object MakeItG8 extends App with MakeItG8Creator with AskUser {
 
@@ -262,18 +263,40 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
       }
       println(s"$CHECK_MARK Selected build & test command: $ANSI_YELLOW$scriptTestCommand$ANSI_RESET")
 
+      def readGitIgnoreFile(file: Option[File]): List[String] =
+        file
+          .map(gitignore =>
+            if (gitignore.exists) {
+              println(
+                s"$CHECK_MARK Read .gitgnore: $ANSI_YELLOW${gitignore.path.relativize(sourceFolder)}$ANSI_RESET"
+              )
+              GitIgnore.parseGitIgnore(gitignore.contentAsString(StandardCharsets.UTF_8))
+            }
+            else Nil
+          )
+          .getOrElse(Nil)
+
+      def maybeFindGlobalGitIgnore(): Option[File] = {
+        val globalGitIgnorePath =
+          process.Process.apply("git config --global core.excludesFile".split(" ")).lazyLines_!.mkString
+        if (globalGitIgnorePath.isBlank()) None
+        else {
+          val globalGitIgnoreFile = File(
+            if (globalGitIgnorePath.startsWith("~/"))
+              s"${System.getProperty("user.home")}${globalGitIgnorePath.drop(1)}"
+            else globalGitIgnorePath
+          )
+          if (globalGitIgnoreFile.exists && globalGitIgnoreFile.isRegularFile) {
+            Some(globalGitIgnoreFile)
+          }
+          else None
+        }
+      }
+
       val ignoredPaths: List[String] = {
-        val gitignore: File = sourceFolder / ".gitignore"
-        ".git/" ::
-          (if (gitignore.exists) {
-             GitIgnore.parseGitIgnore(gitignore.contentAsString(StandardCharsets.UTF_8))
-           }
-           else {
-             println(
-               s"$ANSI_YELLOW\u2757 No .gitignore file found, processing all nested files and folders.$ANSI_RESET"
-             )
-             Nil
-           })
+        val localGitIgnore = Some(sourceFolder / ".gitignore")
+        val globalGitIgnore = maybeFindGlobalGitIgnore()
+        ".git/" :: readGitIgnoreFile(localGitIgnore) ::: readGitIgnoreFile(globalGitIgnore)
       }
 
       if (ignoredPaths.size > 1) {
@@ -282,6 +305,11 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
         )
         ignoredPaths.foreach(pattern => println(s"\t$ANSI_YELLOW$pattern$ANSI_RESET"))
         println()
+      }
+      else {
+        println(
+          s"$ANSI_YELLOW\u2757 No .gitignore file found, processing all nested files and folders.$ANSI_RESET"
+        )
       }
 
       val proceed =
