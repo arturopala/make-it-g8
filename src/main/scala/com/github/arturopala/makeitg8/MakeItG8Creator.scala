@@ -55,9 +55,9 @@ trait MakeItG8Creator {
         targetG8Folder.clear()
       }
 
-      // ---------------------------------------
+      //---------------------------------------
       // PREPARE CONTENT REPLACEMENT KEYWORDS
-      // ---------------------------------------
+      //---------------------------------------
 
       val keywords: Seq[String] =
         config.keywordValueMap.-(KeyTemplateGithubUser).toSeq.sortBy(p => -p._2.length).map(_._1)
@@ -88,9 +88,9 @@ trait MakeItG8Creator {
 
       println()
 
-      // ------------------------------------------------------
+      //------------------------------------------------------
       // COPY PARAMETRISED PROJECT FILES TO TEMPLATE G8 FOLDER
-      // ------------------------------------------------------
+      //------------------------------------------------------
 
       import scala.collection.JavaConverters.asScalaIterator
 
@@ -137,9 +137,9 @@ trait MakeItG8Creator {
         case _ =>
       }
 
-      // ----------------------------------------------------
+      //----------------------------------------------------
       // COPY PARAMETRISED BUILD FILES TO TEMPLATE G8 FOLDER
-      // ----------------------------------------------------
+      //----------------------------------------------------
 
       val placeholders: Seq[(String, String)] =
         TemplateUtils
@@ -188,10 +188,10 @@ trait MakeItG8Creator {
             .mkString("\n\t"),
           "$exampleTargetTree$" -> FileTree.draw(FileTree.compute(sourcePaths)).linesIterator.mkString("\n\t"),
           "$g8CommandLineArgs$" -> s"""${(config.keywordValueMap.-(KeyTemplateGithubUser).toSeq ++ config.packageName
-              .map(p => Seq("package" -> p))
-              .getOrElse(Seq.empty))
-              .map { case (k, v) => s"""--$k="$v"""" }
-              .mkString(" ")} -o $testTemplateName""",
+            .map(p => Seq("package" -> p))
+            .getOrElse(Seq.empty))
+            .map { case (k, v) => s"""--$k="$v"""" }
+            .mkString(" ")} -o $testTemplateName""",
           "$testTargetFolder$" -> config.scriptTestTarget,
           "$testTemplateName$" -> testTemplateName,
           "$testCommand$"      -> config.scriptTestCommand,
@@ -200,11 +200,11 @@ trait MakeItG8Creator {
             (s"""sbt "run --noclear --force --source ../../${config.scriptTestTarget}/$testTemplateName --target ../.. --name ${config.templateName} """ ++ config.packageName
               .map(p => s""" --package $p """)
               .getOrElse("") ++ s"""--description ${URLEncoder
-                .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${keywordValueMap
-                .map { case (k, v) =>
-                  s"""$k=${URLEncoder.encode(v, "utf-8")}"""
-                }
-                .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
+              .encode(config.templateDescription, "utf-8")} $customReadmeHeaderPathOpt -K ${keywordValueMap
+              .map { case (k, v) =>
+                s"""$k=${URLEncoder.encode(v, "utf-8")}"""
+              }
+              .mkString(" ")}" -Dbuild.test.command="${config.scriptTestCommand}" """),
           "$customReadmeHeader$" -> customReadmeHeader.getOrElse(""),
           "$templateGithubUser$" -> templateGithubUser,
           "$templateBranch$"     -> templateBranch.getOrElse("master")
@@ -250,9 +250,9 @@ trait MakeItG8Creator {
         }
       }
 
-      // ----------------------------------------------------------
+      //----------------------------------------------------------
       // COPY OR CREATE STATIC PROJECT FILES IN TEMPLATE G8 FOLDER
-      // ----------------------------------------------------------
+      //----------------------------------------------------------
 
       val defaultPropertiesFile =
         targetG8Folder.createChild("default.properties")

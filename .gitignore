@@ -7,4 +7,3 @@ target/
 .vscode/
 .bloop/
 project/metals.sbt
-.bsp/

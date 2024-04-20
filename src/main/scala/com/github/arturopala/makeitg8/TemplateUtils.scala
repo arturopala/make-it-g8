@@ -22,9 +22,9 @@ import scala.util.Try
 
 object TemplateUtils {
 
-  // ---------------------------------------
+  //---------------------------------------
   // UTILITY AND HELPER FUNCTIONS
-  // ---------------------------------------
+  //---------------------------------------
 
   final def templatePathFor(
     path: Path,
@@ -170,10 +170,10 @@ object TemplateUtils {
         val required =
           placeholders.filter { case (key, value) =>
             placeholderStats.get(s"$$$key$$").exists(_ > 0) ||
-            namePropertyValue.contains(key)
+              namePropertyValue.contains(key)
           }
         if (required.nonEmpty && !required.exists(_._1 == keyword))
-          placeholders(0) +: required
+          (placeholders(0) +: required)
         else
           required
       }.flatten

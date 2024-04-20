@@ -63,9 +63,9 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
 
       import scala.collection.JavaConverters._
 
-      // ---------------------------------------
+      //---------------------------------------
       // READ CONFIGURATION AND COMMAND LINE
-      // ---------------------------------------
+      //---------------------------------------
 
       val commandLine = new CommandLine(args)
       val config: Config = ConfigFactory.load()
@@ -120,7 +120,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
       println(s"$CHECK_MARK Selected source folder: $ANSI_YELLOW${sourceFolder.pathAsString}$ANSI_RESET")
 
       val defaultTarget =
-        sourceFolder.path.resolveSibling(sourceFolder.path.getFileName().toString() + ".g8")
+        sourceFolder.path.resolveSibling(sourceFolder.path.getFileName() + ".g8")
 
       val targetFolder = File(
         commandLine.targetPath.map(currentDir.resolve).getOrElse {
@@ -236,7 +236,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
               )
             }
           }
-          askNextKeyword(defaultKeywords.iterator.toMap)
+          askNextKeyword(defaultKeywords.m)
         }
         else defaultKeywords
       }
@@ -296,7 +296,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
           ignoredPaths,
           templateName,
           packageName,
-          keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")).toMap,
+          keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")),
           g8BuildTemplateSource,
           g8BuildTemplateResources,
           scriptTestTarget,

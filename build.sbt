@@ -1,6 +1,6 @@
 inThisBuild(
   List(
-    scalaVersion := "3.3.3",
+    scalaVersion := "2.12.17",
     organization := "com.github.arturopala",
     organizationName := "Artur Opala",
     homepage := Some(url("https://github.com/arturopala/make-it-g8")),
@@ -22,10 +22,10 @@ lazy val root = (project in file("."))
   .settings(
     name := "make-it-g8",
     libraryDependencies ++= Seq(
-      "com.typesafe"          % "config"       % "1.4.3",
-      "com.github.pathikrit" %% "better-files" % "3.9.2",
-      "org.rogach"           %% "scallop"      % "5.1.0",
-      "org.scalatest"        %% "scalatest"    % "3.2.18" % Test
+      "com.typesafe"          % "config"       % "1.4.1",
+      "com.github.pathikrit" %% "better-files" % "3.9.1",
+      "org.rogach"           %% "scallop"      % "4.0.2",
+      "org.scalatest"        %% "scalatest"    % "3.2.3" % Test
     ),
     excludeFilter in (Compile, unmanagedResources) := NothingFilter,
     scalafmtOnCompile in Compile := true,

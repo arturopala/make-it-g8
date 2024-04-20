@@ -24,11 +24,12 @@ import scala.annotation.tailrec
 /** Filter paths using .gitignore patterns.
   *
   * See:
-  *   - https://git-scm.com/docs/gitignore
-  *   - https://www.man7.org/linux/man-pages/man7/glob.7.html
+  *  - https://git-scm.com/docs/gitignore
+  *  - https://www.man7.org/linux/man-pages/man7/glob.7.html
   *
   * @note
-  *   Paths representing directories MUST end with a slash, paths representing files MUST NOT end with a slash.
+  *   Paths representing directories MUST end with a slash,
+  *   paths representing files MUST NOT end with a slash.
   */
 final case class GitIgnore(gitPatterns: Seq[String]) {
 
@@ -205,7 +206,8 @@ object GitIgnore {
 
   /** Matches path against the Git pattern.
     *
-    * Each method returns the furthest matched position, or -1 if not matched at all.
+    * Each method returns the furthest matched position,
+    * or -1 if not matched at all.
     */
   sealed trait Matcher {
     def isPartOf(path: String): Int
