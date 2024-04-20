@@ -279,7 +279,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
       def maybeFindGlobalGitIgnore(): Option[File] = {
         val globalGitIgnorePath =
           process.Process.apply("git config --global core.excludesFile".split(" ")).lazyLines_!.mkString
-        if (globalGitIgnorePath.isBlank()) None
+        if (globalGitIgnorePath.isEmpty()) None
         else {
           val globalGitIgnoreFile = File(
             if (globalGitIgnorePath.startsWith("~/"))
