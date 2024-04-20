@@ -236,7 +236,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
               )
             }
           }
-          askNextKeyword(defaultKeywords.m)
+          askNextKeyword(defaultKeywords.iterator.toMap)
         }
         else defaultKeywords
       }
@@ -296,7 +296,7 @@ object MakeItG8 extends App with MakeItG8Creator with AskUser {
           ignoredPaths,
           templateName,
           packageName,
-          keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")),
+          keywordValueMap.mapValues(URLDecoder.decode(_, "utf-8")).toMap,
           g8BuildTemplateSource,
           g8BuildTemplateResources,
           scriptTestTarget,

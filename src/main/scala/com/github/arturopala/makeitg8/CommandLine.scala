@@ -23,6 +23,8 @@ import org.rogach.scallop.exceptions.{RequiredOptionNotFound, UnknownOption}
 
 import scala.util.control.NonFatal
 import scala.util.Try
+import org.rogach.scallop.ValueConverter
+import better.files.File
 
 class CommandLine(arguments: Seq[String]) extends ScallopConf(arguments) {
 
