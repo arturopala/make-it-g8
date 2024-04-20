@@ -114,6 +114,12 @@ Test
 
 Run locally
 
+    # run test command
+    ./test.sh
+
+    # run test command using latest version on github
+    ./make-it-g8.sh --source . --target target/test
+
     sbt run
 
     sbt "run --interactive"
