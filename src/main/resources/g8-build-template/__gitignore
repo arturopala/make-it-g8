@@ -11,6 +11,7 @@ boot/
 logs/
 out/
 tmp/
+bin/
 projectFilesBackup/
 .history
 .idea/
@@ -27,3 +28,4 @@ node_modules/
 .metals/
 .vscode/
 .bsp/
+.scala-build/
